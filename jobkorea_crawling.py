@@ -3,20 +3,16 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
-req = requests.get('http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page=')
+req = requests.get('http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page=1')
 html = req.text
 soup = BeautifulSoup(html, 'html.parser')
 page = soup.select(
     '.tplPagination > ul > li'
     )
-name,endday,title=[],[],[]
-dept= []
-coLevel= []
-career= []
-edu= []
-region= []
-link= []
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+name,endday,title,dept,dept2,dept3,coLevel,career,edu,region,link,comp_location=[],[],[],[],[],[],[],[],[],[],[],[]
+
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+
 emp_grade_score=[] #학점 
 emp_toeic_score=[]
 emp_ts_score=[]
@@ -26,6 +22,10 @@ emp_license_score=[] #자격증개수
 emp_otherCountry_score=[]  #해외경험
 emp_intern_score=[]
 emp_award_score=[]
+
+comp_industry,comp_member_number,comp_year, comp_level, comp_spec, comp_revenue=[],[],[],[],[],[]
+
+
 def get_main_content(url):
     print(url)
     time.sleep(2)
@@ -57,6 +57,43 @@ def get_main_content(url):
     else:
         tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7,tmp8,tmp9='','','','','','','','',''
 
+
+    result1=soupp.find_all('a',title="새창")[3]
+    f=result1.get_text(strip=True, separator='-') 
+    comp_location.append(f)
+
+    result2=soupp.find_all('dl',class_="tbList")[3]
+    ff=result2.get_text(strip=True, separator='-') 
+
+
+
+    comp_industry.append(ff.split('-')[1])
+    comp_member_number.append(ff.split('-')[3])
+    comp_year.append(ff.split('-')[6])
+    comp_level.append(ff.split('-')[11])
+
+    split_list =ff.split('-')
+    if len(split_list)<=12:
+        comp_spec.append('')
+        comp_revenue.append('')
+    elif ff.split('-')[12] =="매출액": #인증 대신 영업 이익만 있다면 
+        comp_spec.append('')
+        comp_revenue.append(ff.split('-')[13])
+    else:
+        if len(split_list)<=14: #매출액 대신 인증만 있다면 
+            comp_spec.append(ff.split('-')[13])
+            comp_revenue.append('')
+        else: #매츨액, 인증 둘 다 있다면 
+            comp_spec.append(ff.split('-')[13])
+            comp_revenue.append(ff.split('-')[15])
+
+
+
+    print(comp_level)
+    print("::::::::::;spec::::::::;") 
+    print(comp_spec) 
+    print(comp_revenue)
+
     emp_grade_score.append(tmp1)
     emp_toeic_score.append(tmp2)
     emp_ts_score.append(tmp3)
@@ -66,8 +103,6 @@ def get_main_content(url):
     emp_otherCountry_score.append(tmp7)
     emp_intern_score.append(tmp8)
     emp_award_score.append(tmp9)
-
-    print(tmp4)
 
 for pa in page:
     sendpage=urlpage+str(pa.text)
@@ -85,7 +120,7 @@ for pa in page:
         temp3=q.select(
             '.info .tit .link span'  )
         temp4=q.select(
-            '.info .sTit span')
+            '.info .sTit span') #dept
         temp5=q.select(
             '.co .coDesc .coLyArea .btnItem .devType1000 span')
         temp6=q.select(
@@ -98,7 +133,12 @@ for pa in page:
             '.sDesc span:nth-of-type(2)')
         temp10=q.select(
             '.info .tit .link')
-
+        temp11=q.select( #dept2
+            '.info .sTit span:nth-of-type(2)'
+            )
+        temp12=q.select( #dept3
+             '.info .sTit span:nth-of-type(3)'
+            )
         for temp in temp10:
             link.append(temp.get('href'))
         
@@ -112,6 +152,15 @@ for pa in page:
             coLevel.append(temp6[0].string)
         else :
             coLevel.append('')
+        if temp12 :
+            dept3.append(temp12[0].string)
+            dept2.append(temp11[0].string)
+        elif temp11:
+            dept2.append(temp11[0].string)
+            dept3.append('')
+        else :
+            dept3.append('')
+            dept2.append('')
         career.append(temp7[0].string)
         edu.append(temp8[0].string)
         region.append(temp9[0].string)
