@@ -3,7 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
-req = requests.get('http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page=1')
+
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+
+req = requests.get(urlpage)
 html = req.text
 soup = BeautifulSoup(html, 'html.parser')
 page = soup.select(
@@ -11,7 +14,6 @@ page = soup.select(
     )
 name,endday,title,dept,dept2,dept3,coLevel,career,edu,region,link,comp_location=[],[],[],[],[],[],[],[],[],[],[],[]
 
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 emp_grade_score=[] #학점 
 emp_toeic_score=[]
@@ -23,7 +25,7 @@ emp_otherCountry_score=[]  #해외경험
 emp_intern_score=[]
 emp_award_score=[]
 
-comp_industry,comp_member_number,comp_year, comp_level, comp_spec, comp_revenue=[],[],[],[],[],[]
+comp_industry,comp_member_number,comp_year, comp_level, comp_spec,comp_revenue=[],[],[],[],[],[]
 
 
 def get_main_content(url):
@@ -58,13 +60,14 @@ def get_main_content(url):
         tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7,tmp8,tmp9='','','','','','','','',''
 
 
-    result1=soupp.find_all('a',title="새창")[3]
-    f=result1.get_text(strip=True, separator='-') 
-    comp_location.append(f)
+
 
     result2=soupp.find_all('dl',class_="tbList")[3]
     ff=result2.get_text(strip=True, separator='-') 
 
+    result1=soupp.find_all('a', title="새창")[3]
+    f=result1.get_text(strip=True, separator='-') 
+    comp_location.append(f)
 
 
     comp_industry.append(ff.split('-')[1])
@@ -174,22 +177,46 @@ workbook = xlsxwriter.Workbook('sample.xlsx')
 worksheet = workbook.add_worksheet()
 
 # Widen the first column to make the text clearer.
-worksheet.set_column('A:A', 20)
-worksheet.set_column('B:B', 20)
-worksheet.set_column('C:C', 20)
-
+worksheet.set_column('A:A', 15)
+worksheet.set_column('B:B', 15)
+worksheet.set_column('C:C', 30)
+worksheet.set_column('D:D', 20)
+worksheet.set_column('E:E', 20)
+worksheet.set_column('F:F', 20)
 # Add a bold format to use to highlight cells.
 bold = workbook.add_format({'bold': True})
 
 # Write some simple text.
-worksheet.write('A1', '기업명')
-worksheet.write('B1', '마감일자')
+worksheet.write('A1', '회사 이름')
+worksheet.write('B1', '지원서 마감일자')
 worksheet.write('C1', '제목')
 worksheet.write('D1', '직무')
-worksheet.write('E1', 'c1')
-worksheet.write('F1', 'c2')
-worksheet.write('G1', 'c3')
-worksheet.write('H1', 'c4')
+worksheet.write('E1', '직무2')
+worksheet.write('F1', '직무3')
+worksheet.write('G1', '기업스펙')
+worksheet.write('H1', '요구 경력')
+worksheet.write('I1', '요구 학력')
+worksheet.write('J1', '지역')
+worksheet.write('K1', '상세 지역')
+worksheet.write('L1', '상세페이지 링크')
+
+worksheet.write('M1', '합격자 학점')
+worksheet.write('N1', '합격자 토익')
+worksheet.write('O1', '합격자 토익스피킹')
+worksheet.write('P1', '합격자 오픽')
+worksheet.write('Q1', '합격자 외국어(기타)')
+worksheet.write('R1', '합격자 자격증개수')
+worksheet.write('S1', '합격자 해외경험')
+worksheet.write('T1', '합격자 인턴')
+worksheet.write('U1', '합격자 수상횟수')
+
+worksheet.write('V1', '회사 산업분야')
+worksheet.write('W1', '회사 직원 수')
+worksheet.write('X1', '회사 설립년도')
+worksheet.write('Y1', '회사 규모')
+worksheet.write('Z1', '회사 스펙')
+worksheet.write('AA1', '회사 영업이익')
+
 number=0
 for ind in name:
     # Write some numbers, with row/column notation.
@@ -197,13 +224,35 @@ for ind in name:
     worksheet.write(number+1, 1, endday[number])
     worksheet.write(number+1, 2, title[number])
     worksheet.write(number+1, 3, dept[number])
-    worksheet.write(number+1, 4, coLevel[number])
-    worksheet.write(number+1, 5, career[number])
-    worksheet.write(number+1, 6, edu[number])
-    worksheet.write(number+1, 7, region[number])
-    #worksheet.write(number+1, 8, num[number])
+    worksheet.write(number+1, 4, dept2[number])
+    worksheet.write(number+1, 5, dept3[number])
+    worksheet.write(number+1, 6, coLevel[number])
+    worksheet.write(number+1, 7, career[number])
+    worksheet.write(number+1, 8, edu[number])
+    worksheet.write(number+1, 9, region[number])
     get_main_content(link[number])
-    #worksheet.write(number+1, 9, emp_toeic_score[number])
+    worksheet.write(number+1, 10, comp_location[number])
+    worksheet.write(number+1, 11, link[number])
+
+    worksheet.write(number+1, 12, emp_grade_score[number])
+    worksheet.write(number+1, 13, emp_toeic_score[number])
+    worksheet.write(number+1, 14, emp_ts_score[number])
+    worksheet.write(number+1, 15, emp_opic_score[number])
+    worksheet.write(number+1, 16, emp_etcL_score[number])
+    worksheet.write(number+1, 17, emp_license_score[number])
+    worksheet.write(number+1, 18, emp_otherCountry_score[number])
+    worksheet.write(number+1, 19, emp_intern_score[number])
+    worksheet.write(number+1, 20, emp_award_score[number])
+
+    worksheet.write(number+1, 21, comp_industry[number])
+    worksheet.write(number+1, 22, comp_member_number[number])
+    worksheet.write(number+1, 23, comp_year[number])
+    worksheet.write(number+1, 24, comp_level[number])
+    worksheet.write(number+1, 25, comp_spec[number])
+    worksheet.write(number+1, 26, comp_revenue[number])
+
+  
+
     number=number+1
 
 workbook.close()
