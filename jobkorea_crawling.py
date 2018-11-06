@@ -2,10 +2,10 @@ import xlsxwriter
 import requests
 from bs4 import BeautifulSoup
 import time
-
-
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-
+import re
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 req = requests.get(urlpage)
 html = req.text
 soup = BeautifulSoup(html, 'html.parser')
@@ -27,7 +27,31 @@ emp_award_score=[]
 
 comp_industry,comp_member_number,comp_year, comp_level, comp_spec,comp_revenue=[],[],[],[],[],[]
 
+cover_letter_Q,cover_letter_A=[],[]
 
+def get_cover_letter_Q(url):
+    time.sleep(2)
+    print('여기까지 옴'+url)
+    req=requests.get('http://www.jobkorea.co.kr'+url)
+    time.sleep(2)
+    html=req.text
+    soup=BeautifulSoup(html,'html.parser')
+
+    realdata = soup.select(
+    '.cont .bx ul '
+    )
+    for r in realdata:
+        tt1= r.select('li')
+        tt1=make_context(tt1)
+
+        return tt1
+
+
+def make_context(arr):
+    str1=''
+    for t in arr:
+        str1=str1+t.text
+    return str1
 def get_main_content(url):
     print(url)
     time.sleep(2)
@@ -59,21 +83,33 @@ def get_main_content(url):
     else:
         tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7,tmp8,tmp9='','','','','','','','',''
 
-
-
-
-    result2=soupp.find_all('dl',class_="tbList")[3]
-    ff=result2.get_text(strip=True, separator='-') 
-
     result1=soupp.find_all('a', title="새창")[3]
     f=result1.get_text(strip=True, separator='-') 
     comp_location.append(f)
+
+    tmp_ar=''
+    tmp11= soupp.select('.devStartlist.listArea.pAssayList ul li')
+    temp2=''
+    for t in tmp11:
+        temp11 =t.select('.tx a')
+
+        tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
+
+
+    print(tmp_ar)
+    cover_letter_Q.append(tmp_ar)
+    result2=soupp.find_all('dl',class_="tbList")[3]
+    ff=result2.get_text(strip=True, separator='-') 
+
 
 
     comp_industry.append(ff.split('-')[1])
     comp_member_number.append(ff.split('-')[3])
     comp_year.append(ff.split('-')[6])
-    comp_level.append(ff.split('-')[11])
+    comp_level.append(ff.split('-')[11]) 
+    
+
+
 
     split_list =ff.split('-')
     if len(split_list)<=12:
@@ -90,12 +126,9 @@ def get_main_content(url):
             comp_spec.append(ff.split('-')[13])
             comp_revenue.append(ff.split('-')[15])
 
+ 
 
 
-    print(comp_level)
-    print("::::::::::;spec::::::::;") 
-    print(comp_spec) 
-    print(comp_revenue)
 
     emp_grade_score.append(tmp1)
     emp_toeic_score.append(tmp2)
@@ -216,6 +249,7 @@ worksheet.write('X1', '회사 설립년도')
 worksheet.write('Y1', '회사 규모')
 worksheet.write('Z1', '회사 스펙')
 worksheet.write('AA1', '회사 영업이익')
+worksheet.write('AA1', '회사 영업이익')
 
 number=0
 for ind in name:
@@ -250,8 +284,7 @@ for ind in name:
     worksheet.write(number+1, 24, comp_level[number])
     worksheet.write(number+1, 25, comp_spec[number])
     worksheet.write(number+1, 26, comp_revenue[number])
-
-  
+    worksheet.write(number+1, 27, cover_letter_Q[number])
 
     number=number+1
 
