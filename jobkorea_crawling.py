@@ -30,7 +30,7 @@ comp_industry,comp_member_number,comp_year, comp_level, comp_spec,comp_revenue=[
 cover_letter_Q,cover_letter_A=[],[]
 
 def get_cover_letter_Q(url):
-
+    time.sleep(2)
     print('여기까지 옴'+url)
     req=requests.get('http://www.jobkorea.co.kr'+url)
     time.sleep(2)
@@ -43,35 +43,33 @@ def get_cover_letter_Q(url):
     for r in realdata:
         tt1= r.select('li')
         tt1=make_context(tt1)
-
         return tt1
 
 def get_cover_letter_A(url):
- 
+    time.sleep(2)
     print('여기까지 옴22'+url)
     req=requests.get('http://www.jobkorea.co.kr'+url)
     time.sleep(2)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
-  #  realdata=soup.find_all()
-    realdata = soup.select(
-    '.show .tx'
-    )
-    for r in realdata:
-        return r.text
-
+    realdata=soup.find_all('div',class_='tx')
+    str1=make_context(realdata)
+    return str1
+    # realdata = soup.select(
+    # '.show .tx'
+    # )
+    # s=''
+    # for r in realdata:
+    #     s=s+r.text
+    # return s
 
 def make_context(arr):
     str1=''
     for t in arr:
         str1=str1+t.text
     return str1
-def make_context2(arr):
-    str1=''
-    for t in arr:
-        str1=str1+str(t)
-    return str1
+
 
 def get_main_content(url):
     print(url)
@@ -116,7 +114,9 @@ def get_main_content(url):
         temp11 =t.select('.tx a')
 
         tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
-        tmp_arr=get_cover_letter_A(temp11[0].get('href'))
+        for y in temp11:
+            print(y)
+            tmp_arr=tmp_arr+'/'+get_cover_letter_A(y.get('href'))
     print('tmp_ar:'+tmp_ar)
     print('tmp_arr:'+tmp_arr)
     cover_letter_Q.append(tmp_ar)
