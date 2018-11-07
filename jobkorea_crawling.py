@@ -4,13 +4,13 @@ from bs4 import BeautifulSoup
 import time
 import re
 #결과물 5개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 800개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 1개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#결과물 140개 
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#결과물 190개 
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 req = requests.get(urlpage)
 html = req.text
@@ -33,7 +33,8 @@ emp_award_score=[]
 
 comp_industry,comp_member_number,comp_year, comp_level, comp_spec,comp_revenue=[],[],[],[],[],[]
 
-cover_letter_Q,cover_letter_A=[],[]
+cover_letter_Q,cover_letter_A,after_interview=[],[],[]
+candidate_num, avg_salary=[],[]
 
 def get_cover_letter_Q(url):
     time.sleep(2.7)
@@ -51,6 +52,7 @@ def get_cover_letter_Q(url):
         tt1=make_context(tt1)
         return tt1
 
+
 def get_cover_letter_A(url):
     time.sleep(2.5)
     #print('여기까지 옴22'+url)
@@ -62,13 +64,7 @@ def get_cover_letter_A(url):
     realdata=soup.find_all('div',class_='tx')
     str1=make_context(realdata)
     return str1
-    # realdata = soup.select(
-    # '.show .tx'
-    # )
-    # s=''
-    # for r in realdata:
-    #     s=s+r.text
-    # return s
+
 
 def make_context(arr):
     str1=''
@@ -76,6 +72,20 @@ def make_context(arr):
         str1=str1+t.text
     return str1
 
+
+def get_avg_salary(url):
+    time.sleep(2.7)
+    req=requests.get('http://www.jobkorea.co.kr'+url)
+    time.sleep(2)
+    html=req.text
+    soup=BeautifulSoup(html,'html.parser')
+
+    realdata = soup.find_all('div',class_="salary")
+    if(realdata):
+        final = realdata[0].get_text(strip=True, separator='-') 
+        avg_salary.append(final.split('-')[0])
+    else:
+        avg_salary.append('')
 
 def get_main_content(url):
     #print(url)
@@ -112,6 +122,18 @@ def get_main_content(url):
     f=result1.get_text(strip=True, separator='-') 
     comp_location.append(f)
 
+    result4=soupp.find_all('div', class_="metrics metricsCount")
+    if result4 :
+        f=result4[0].get_text(strip=True, separator='-')
+        candidate_num.append(f.split('-')[1])
+    else:
+        candidate_num.append('')
+    result5=soupp.find_all('a', class_="girBtn girBtn_3")
+
+    link=result5[len(result5)-1].get('href')
+    print(link)
+    get_avg_salary(link)
+
     tmp_ar=''
     tmp_arr=''
     tmp11= soupp.select('.devStartlist.listArea.pAssayList ul li')
@@ -121,12 +143,11 @@ def get_main_content(url):
 
         tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
         for y in temp11:
-            #print(y)
             tmp_arr=tmp_arr+'/'+get_cover_letter_A(y.get('href'))
-    #print('tmp_ar:'+tmp_ar)
-    #print('tmp_arr:'+tmp_arr)
+
     cover_letter_Q.append(tmp_ar)
     cover_letter_A.append(tmp_arr)
+
     result2=soupp.find_all('dl',class_="tbList")[3]
     ff=result2.get_text(strip=True, separator='-') 
 
@@ -170,11 +191,6 @@ def get_main_content(url):
             comp_year.append(ff.split('-')[6])
             comp_level.append(ff.split('-')[11]) 
     
-
- 
-
-
-
     emp_grade_score.append(tmp1)
     emp_toeic_score.append(tmp2)
     emp_ts_score.append(tmp3)
@@ -297,6 +313,9 @@ worksheet.write('AA1', '회사 영업이익')
 
 worksheet.write('AB1', '자소서 질문')
 worksheet.write('AC1', '합격 자소서 답안')
+
+worksheet.write('AD1', '지원자 수')
+worksheet.write('AE1', '평균 연봉')
 number=0
 for ind in name:
     # Write some numbers, with row/column notation.
@@ -333,6 +352,8 @@ for ind in name:
     worksheet.write(number+1, 26, comp_revenue[number])
     worksheet.write(number+1, 27, cover_letter_Q[number])
     worksheet.write(number+1, 28, cover_letter_A[number])
+    worksheet.write(number+1, 29, candidate_num[number])
+    worksheet.write(number+1, 30, avg_salary[number])
     number=number+1
 
 workbook.close()
