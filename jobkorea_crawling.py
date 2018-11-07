@@ -72,7 +72,6 @@ def make_context(arr):
         str1=str1+t.text
     return str1
 
-
 def get_avg_salary(url):
     time.sleep(2.7)
     req=requests.get('http://www.jobkorea.co.kr'+url)
@@ -86,6 +85,22 @@ def get_avg_salary(url):
         avg_salary.append(final.split('-')[0])
     else:
         avg_salary.append('')
+
+def get_after_interview(url):
+    time.sleep(2.7)
+    req=requests.get('http://www.jobkorea.co.kr'+url)
+    time.sleep(2)
+    html=req.text
+    soup=BeautifulSoup(html,'html.parser')
+
+    realdata = soup.find_all('dd',class_="")
+
+    for i in realdata:
+
+        final = i.get_text(strip=True, separator='-') 
+        print(final)
+
+
 
 def get_main_content(url):
     #print(url)
@@ -118,21 +133,33 @@ def get_main_content(url):
     else:
         tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7,tmp8,tmp9='','','','','','','','',''
 
+    #회사 위치 가져오기
     result1=soupp.find_all('a', title="새창")[3]
     f=result1.get_text(strip=True, separator='-') 
     comp_location.append(f)
 
+    #지원자 수 가져오기
     result4=soupp.find_all('div', class_="metrics metricsCount")
     if result4 :
         f=result4[0].get_text(strip=True, separator='-')
         candidate_num.append(f.split('-')[1])
     else:
         candidate_num.append('')
-    result5=soupp.find_all('a', class_="girBtn girBtn_3")
 
+    #연봉 정보가 있는 링크 받아오기
+    result5=soupp.find_all('a', class_="girBtn girBtn_3")
     link=result5[len(result5)-1].get('href')
-    print(link)
     get_avg_salary(link)
+
+    #면접후기 링크 가져오기
+    result6=soupp.find_all('a', class_="linkList")
+    if(result6):
+        link1=result6[0].get('href')
+        print(link1)
+        get_after_interview(link1)
+    else:
+        after_interview.append('')
+
 
     tmp_ar=''
     tmp_arr=''
@@ -316,6 +343,9 @@ worksheet.write('AC1', '합격 자소서 답안')
 
 worksheet.write('AD1', '지원자 수')
 worksheet.write('AE1', '평균 연봉')
+
+
+
 number=0
 for ind in name:
     # Write some numbers, with row/column notation.
