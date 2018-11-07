@@ -3,9 +3,15 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import re
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#결과물 5개
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#결과물 800개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#결과물 1개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#결과물 140개 
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+
 req = requests.get(urlpage)
 html = req.text
 soup = BeautifulSoup(html, 'html.parser')
@@ -30,8 +36,8 @@ comp_industry,comp_member_number,comp_year, comp_level, comp_spec,comp_revenue=[
 cover_letter_Q,cover_letter_A=[],[]
 
 def get_cover_letter_Q(url):
-    time.sleep(2)
-    print('여기까지 옴'+url)
+    time.sleep(2.7)
+    #print('여기까지 옴'+url)
     req=requests.get('http://www.jobkorea.co.kr'+url)
     time.sleep(2)
     html=req.text
@@ -46,10 +52,10 @@ def get_cover_letter_Q(url):
         return tt1
 
 def get_cover_letter_A(url):
-    time.sleep(2)
-    print('여기까지 옴22'+url)
+    time.sleep(2.5)
+    #print('여기까지 옴22'+url)
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    time.sleep(2)
+    time.sleep(2.6)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -72,8 +78,8 @@ def make_context(arr):
 
 
 def get_main_content(url):
-    print(url)
-    time.sleep(2)
+    #print(url)
+    time.sleep(2.8)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     time.sleep(2)
     htmll = reqq.text
@@ -115,39 +121,55 @@ def get_main_content(url):
 
         tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
         for y in temp11:
-            print(y)
+            #print(y)
             tmp_arr=tmp_arr+'/'+get_cover_letter_A(y.get('href'))
-    print('tmp_ar:'+tmp_ar)
-    print('tmp_arr:'+tmp_arr)
+    #print('tmp_ar:'+tmp_ar)
+    #print('tmp_arr:'+tmp_arr)
     cover_letter_Q.append(tmp_ar)
     cover_letter_A.append(tmp_arr)
     result2=soupp.find_all('dl',class_="tbList")[3]
     ff=result2.get_text(strip=True, separator='-') 
 
 
-
     comp_industry.append(ff.split('-')[1])
-    comp_member_number.append(ff.split('-')[3])
-    comp_year.append(ff.split('-')[6])
-    comp_level.append(ff.split('-')[11]) 
-    
-
-
 
     split_list =ff.split('-')
     if len(split_list)<=12:
-        comp_spec.append('')
-        comp_revenue.append('')
+        if len(split_list)<=10:
+            comp_member_number.append('')
+            comp_spec.append('')
+            comp_revenue.append('')
+            comp_year.append(ff.split('-')[3])
+            comp_level.append(ff.split('-')[8])
+        else:
+            comp_spec.append('')
+            comp_revenue.append('')
+            comp_member_number.append(ff.split('-')[3])
+            comp_year.append(ff.split('-')[6])
+            comp_level.append('') 
+    
     elif ff.split('-')[12] =="매출액": #인증 대신 영업 이익만 있다면 
         comp_spec.append('')
         comp_revenue.append(ff.split('-')[13])
+        comp_member_number.append(ff.split('-')[3])
+        comp_year.append(ff.split('-')[6])
+        comp_level.append(ff.split('-')[11]) 
+    
     else:
         if len(split_list)<=14: #매출액 대신 인증만 있다면 
             comp_spec.append(ff.split('-')[13])
             comp_revenue.append('')
+            comp_member_number.append(ff.split('-')[3])
+            comp_year.append(ff.split('-')[6])
+            comp_level.append(ff.split('-')[11]) 
+    
         else: #매츨액, 인증 둘 다 있다면 
             comp_spec.append(ff.split('-')[13])
             comp_revenue.append(ff.split('-')[15])
+            comp_member_number.append(ff.split('-')[3])
+            comp_year.append(ff.split('-')[6])
+            comp_level.append(ff.split('-')[11]) 
+    
 
  
 
@@ -278,6 +300,7 @@ worksheet.write('AC1', '합격 자소서 답안')
 number=0
 for ind in name:
     # Write some numbers, with row/column notation.
+    print(number)
     worksheet.write(number+1, 0, name[number])
     worksheet.write(number+1, 1, endday[number])
     worksheet.write(number+1, 2, title[number])
