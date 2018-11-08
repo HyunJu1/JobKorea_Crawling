@@ -4,13 +4,13 @@ from bs4 import BeautifulSoup
 import time
 import re
 #결과물 5개
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 800개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 1개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 190개 
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 req = requests.get(urlpage)
 html = req.text
@@ -73,7 +73,7 @@ def make_context(arr):
     return str1
 
 def get_avg_salary(url):
-    time.sleep(2.7)
+
     req=requests.get('http://www.jobkorea.co.kr'+url)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
@@ -85,8 +85,8 @@ def get_avg_salary(url):
     else:
         avg_salary.append('')
 
-def get_after_interview(url):
-    time.sleep(2.7)
+def get_interview_Q(url):
+
     print("url:"+url)
     x=url.find("review")
     if x!=-1:
@@ -107,6 +107,26 @@ def get_after_interview(url):
     else:
         interview_Q.append('')
 
+
+def get_interview_review(url):
+
+    print("url:"+url)
+    x=url.find("review")
+    if x!=-1:
+        req=requests.get('http://www.jobkorea.co.kr'+url)
+        html=req.text
+        soup=BeautifulSoup(html,'html.parser')
+        ss=soup.select('.reviewQnaWrap ul ')
+        temp_s=''
+        for s in ss:
+            realdata = s.find_all('p')
+            for i in realdata:
+                final = i.get_text(strip=True, separator='-') 
+                print(final)
+                temp_s=temp_s+"-"+final
+        interview_review.append(temp_s)
+    else:
+        interview_review.append('')
 
 
 def get_main_content(url):
@@ -160,12 +180,21 @@ def get_main_content(url):
 
     #면접후기 링크 가져오기
     result6=soupp.find_all('a', class_="linkList")
+
     if(result6):
-        link1=result6[0].get('href')
-        print(link1)
-        get_after_interview(link1)
+        for r in result6:
+            link1=r.get('href')
+            if link1[-1]=="5":
+                get_interview_Q(link1)
+                interview_review.append('')
+            elif link1[-1]=="3":
+                get_interview_review(link1)
+                interview_Q.append('')
+
+   
     else:
         interview_Q.append('')
+        interview_review.append('')
 
 
     tmp_ar=''
@@ -359,6 +388,8 @@ number=0
 for ind in name:
     # Write some numbers, with row/column notation.
     print(number)
+    get_main_content(link[number])
+
     worksheet.write(number+1, 0, name[number])
     worksheet.write(number+1, 1, endday[number])
     worksheet.write(number+1, 2, title[number])
@@ -369,7 +400,7 @@ for ind in name:
     worksheet.write(number+1, 7, career[number])
     worksheet.write(number+1, 8, edu[number])
     worksheet.write(number+1, 9, region[number])
-    get_main_content(link[number])
+    
     worksheet.write(number+1, 10, comp_location[number])
     worksheet.write(number+1, 11, link[number])
 
@@ -394,6 +425,7 @@ for ind in name:
     worksheet.write(number+1, 29, candidate_num[number])
     worksheet.write(number+1, 30, avg_salary[number])
     worksheet.write(number+1, 31, interview_Q[number])
+    worksheet.write(number+1, 32, interview_review[number])
     number=number+1
 
 workbook.close()
