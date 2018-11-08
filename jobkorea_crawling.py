@@ -33,7 +33,7 @@ emp_award_score=[]
 
 comp_industry,comp_member_number,comp_year, comp_level, comp_spec,comp_revenue=[],[],[],[],[],[]
 
-cover_letter_Q,cover_letter_A,after_interview=[],[],[]
+cover_letter_Q,cover_letter_A,interview_Q,interview_review=[],[],[],[]
 candidate_num, avg_salary=[],[]
 
 def get_cover_letter_Q(url):
@@ -75,7 +75,6 @@ def make_context(arr):
 def get_avg_salary(url):
     time.sleep(2.7)
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    time.sleep(2)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -88,17 +87,25 @@ def get_avg_salary(url):
 
 def get_after_interview(url):
     time.sleep(2.7)
-    req=requests.get('http://www.jobkorea.co.kr'+url)
-    time.sleep(2)
-    html=req.text
-    soup=BeautifulSoup(html,'html.parser')
+    print("url:"+url)
+    x=url.find("review")
+    if x!=-1:
+        req=requests.get('http://www.jobkorea.co.kr'+url)
+        html=req.text
+        soup=BeautifulSoup(html,'html.parser')
+        ss=soup.select('.reviewQnaWrap ul li')
+        temp_s=''
+        for s in ss:
+            realdata = s.find_all('span',class_="tx")
+    
+            for i in realdata:
 
-    realdata = soup.find_all('dd',class_="")
-
-    for i in realdata:
-
-        final = i.get_text(strip=True, separator='-') 
-        print(final)
+                final = i.get_text(strip=True, separator='-') 
+                print(final)
+                temp_s=temp_s+"-"+final
+        interview_Q.append(temp_s)
+    else:
+        interview_Q.append('')
 
 
 
@@ -158,7 +165,7 @@ def get_main_content(url):
         print(link1)
         get_after_interview(link1)
     else:
-        after_interview.append('')
+        interview_Q.append('')
 
 
     tmp_ar=''
@@ -344,6 +351,8 @@ worksheet.write('AC1', '합격 자소서 답안')
 worksheet.write('AD1', '지원자 수')
 worksheet.write('AE1', '평균 연봉')
 
+worksheet.write('AF1', '면접 질문')
+
 
 
 number=0
@@ -384,6 +393,7 @@ for ind in name:
     worksheet.write(number+1, 28, cover_letter_A[number])
     worksheet.write(number+1, 29, candidate_num[number])
     worksheet.write(number+1, 30, avg_salary[number])
+    worksheet.write(number+1, 31, interview_Q[number])
     number=number+1
 
 workbook.close()
