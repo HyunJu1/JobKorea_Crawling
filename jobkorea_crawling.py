@@ -3,14 +3,18 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import re
+from konlpy.tag import Twitter
+from konlpy.utils import pprint
+twitter = Twitter()
 #결과물 5개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 800개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 1개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 190개 
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+
 
 req = requests.get(urlpage)
 html = req.text
@@ -19,7 +23,6 @@ page = soup.select(
     '.tplPagination > ul > li'
     )
 name,endday,title,dept,dept2,dept3,coLevel,career,edu,region,link,comp_location=[],[],[],[],[],[],[],[],[],[],[],[]
-
 
 emp_grade_score=[] #학점 
 emp_toeic_score=[]
@@ -35,6 +38,8 @@ comp_industry,comp_member_number,comp_year, comp_level, comp_spec,comp_revenue=[
 
 cover_letter_Q,cover_letter_A,interview_Q,interview_review=[],[],[],[]
 candidate_num, avg_salary=[],[]
+
+cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_nouns=[],[],[],[]
 
 def get_cover_letter_Q(url):
     time.sleep(2.7)
@@ -72,8 +77,12 @@ def make_context(arr):
         str1=str1+t.text
     return str1
 
+def make_arr_to_str(arr):
+    str1=''
+    for t in arr:
+        str1=str1+" "+t
+    return str1
 def get_avg_salary(url):
-
     req=requests.get('http://www.jobkorea.co.kr'+url)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
@@ -86,7 +95,6 @@ def get_avg_salary(url):
         avg_salary.append('')
 
 def get_interview_Q(url):
-
     print("url:"+url)
     x=url.find("review")
     if x!=-1:
@@ -95,22 +103,25 @@ def get_interview_Q(url):
         soup=BeautifulSoup(html,'html.parser')
         ss=soup.select('.reviewQnaWrap ul li')
         temp_s=''
+        temp_ss=''
         for s in ss:
             realdata = s.find_all('span',class_="tx")
     
             for i in realdata:
 
                 final = i.get_text(strip=True, separator='-') 
-                print(final)
-                temp_s=temp_s+"-"+final
+
+                tmp=make_arr_to_str(twitter.nouns(final))
+                temp_ss=temp_ss+tmp
+                temp_s=temp_s+final
+        interview_Q_nouns.append(temp_ss)
         interview_Q.append(temp_s)
     else:
         interview_Q.append('')
+        interview_Q_nouns.append('')
 
 
 def get_interview_review(url):
-
-    print("url:"+url)
     x=url.find("review")
     if x!=-1:
         req=requests.get('http://www.jobkorea.co.kr'+url)
@@ -118,22 +129,28 @@ def get_interview_review(url):
         soup=BeautifulSoup(html,'html.parser')
         ss=soup.select('.reviewQnaWrap ul ')
         temp_s=''
+        temp_ss=''
         for s in ss:
             realdata = s.find_all('p')
             for i in realdata:
                 final = i.get_text(strip=True, separator='-') 
-                print(final)
-                temp_s=temp_s+"-"+final
+
+                tmp=make_arr_to_str(twitter.nouns(final)) 
+                
+         
+                temp_s=temp_s+final
+                temp_ss=temp_ss+tmp
         interview_review.append(temp_s)
+        interview_review_nouns.append(temp_ss)
     else:
         interview_review.append('')
+        interview_review_nouns.append('')
 
 
 def get_main_content(url):
-    #print(url)
     time.sleep(2.8)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
-    time.sleep(2)
+    time.sleep(2.5)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
     result = soupp.find_all('span',class_="score")
@@ -182,19 +199,32 @@ def get_main_content(url):
     result6=soupp.find_all('a', class_="linkList")
 
     if(result6):
+        cnt=0
         for r in result6:
             link1=r.get('href')
             if link1[-1]=="5":
+                cnt+=1
                 get_interview_Q(link1)
-                interview_review.append('')
-            elif link1[-1]=="3":
-                get_interview_review(link1)
-                interview_Q.append('')
+                
 
+            elif link1[-1]=="3":
+                cnt+=2
+                get_interview_review(link1)
+                
+        if(cnt==1):
+            interview_review.append('')
+            interview_review_nouns.append('')
+
+
+        elif(cnt==2):
+            interview_Q.append('')
+            interview_Q_nouns.append('')
    
     else:
         interview_Q.append('')
+        interview_Q_nouns.append('')
         interview_review.append('')
+        interview_review_nouns.append('')
 
 
     tmp_ar=''
@@ -381,8 +411,33 @@ worksheet.write('AD1', '지원자 수')
 worksheet.write('AE1', '평균 연봉')
 
 worksheet.write('AF1', '면접 질문')
+worksheet.write('AG1', '면접 후기')
+
+worksheet.write('AH1', '면접 질문(명사)')
+worksheet.write('AI1', '면접 후기(명사)')
 
 
+
+# # 4. 각 문장별로 형태소 구분하기
+# sentences_tag = []
+# for sentence in okja:
+#     morph = twitter.pos(sentence)
+#     sentences_tag.append(morph)
+#     print(morph)
+#     print('-'*30)
+
+# print(sentences_tag)
+# print(len(sentences_tag))
+# print('\n'*3)
+
+# # 5. 명사 혹은 형용사인 품사만 선별해 리스트에 담기
+# noun_adj_list = []
+# for sentence1 in sentences_tag:
+#     for word, tag in sentence1:
+#         if tag in ['Noun','Adjective']:
+#             noun_adj_list.append(word)
+
+# print(noun_adj_list)
 
 number=0
 for ind in name:
@@ -426,6 +481,11 @@ for ind in name:
     worksheet.write(number+1, 30, avg_salary[number])
     worksheet.write(number+1, 31, interview_Q[number])
     worksheet.write(number+1, 32, interview_review[number])
+
+    worksheet.write(number+1, 33, interview_Q_nouns[number])
+    worksheet.write(number+1, 34, interview_review_nouns[number])
+    #worksheet.write(number+1, 35, cover_letter_Q_nouns[number])
+    #worksheet.write(number+1, 36, cover_letter_A_nouns[number])
     number=number+1
 
 workbook.close()
