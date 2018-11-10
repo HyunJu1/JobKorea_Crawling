@@ -7,15 +7,15 @@ from konlpy.tag import Twitter
 from konlpy.utils import pprint
 twitter = Twitter()
 #결과물 5개
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 800개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 1개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 190개 
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-
-
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#결과물 50개
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 req = requests.get(urlpage)
 html = req.text
 soup = BeautifulSoup(html, 'html.parser')
@@ -236,8 +236,10 @@ def get_main_content(url):
 
         tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
         for y in temp11:
-            tmp_arr=tmp_arr+'/'+get_cover_letter_A(y.get('href'))
+            tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
 
+    cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
+    cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
     cover_letter_Q.append(tmp_ar)
     cover_letter_A.append(tmp_arr)
 
@@ -412,11 +414,10 @@ worksheet.write('AE1', '평균 연봉')
 
 worksheet.write('AF1', '면접 질문')
 worksheet.write('AG1', '면접 후기')
-
 worksheet.write('AH1', '면접 질문(명사)')
 worksheet.write('AI1', '면접 후기(명사)')
-
-
+worksheet.write('AJ1', '자소서 질문(명사)')
+worksheet.write('AK1', '자소서 답안(명사)')
 
 # # 4. 각 문장별로 형태소 구분하기
 # sentences_tag = []
@@ -441,7 +442,6 @@ worksheet.write('AI1', '면접 후기(명사)')
 
 number=0
 for ind in name:
-    # Write some numbers, with row/column notation.
     print(number)
     get_main_content(link[number])
 
@@ -484,8 +484,8 @@ for ind in name:
 
     worksheet.write(number+1, 33, interview_Q_nouns[number])
     worksheet.write(number+1, 34, interview_review_nouns[number])
-    #worksheet.write(number+1, 35, cover_letter_Q_nouns[number])
-    #worksheet.write(number+1, 36, cover_letter_A_nouns[number])
+    worksheet.write(number+1, 35, cover_letter_Q_nouns[number])
+    worksheet.write(number+1, 36, cover_letter_A_nouns[number])
     number=number+1
 
 workbook.close()
