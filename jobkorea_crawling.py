@@ -11,17 +11,17 @@ twitter = Twitter()
 #결과물 800개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 1개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#마감된 공고
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+
+#마감된 공고 중 6개
+urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 190개 
-urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 50개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-req = requests.get(urlpage)
-html = req.text
-soup = BeautifulSoup(html, 'html.parser')
-page = soup.select(
-    '.tplPagination > ul > li'
-    )
+
 name,endday,title,dept,dept2,dept3,coLevel,career,edu,region,link,comp_location=[],[],[],[],[],[],[],[],[],[],[],[]
 
 emp_grade_score=[] #학점 
@@ -145,7 +145,6 @@ def get_interview_review(url):
     else:
         interview_review.append('')
         interview_review_nouns.append('')
-
 
 def get_main_content(url):
     time.sleep(2.8)
@@ -296,70 +295,94 @@ def get_main_content(url):
     emp_intern_score.append(tmp8)
     emp_award_score.append(tmp9)
 
-for pa in page:
-    sendpage=urlpage+str(pa.text)
-    data = requests.get(sendpage)
-    rawdata = data.text
-    parser = BeautifulSoup(rawdata, 'html.parser')
-    realdata = parser.select(
-    '.filterList li'
-    )
-    for q in realdata:
-        temp1=q.select(
-            '.co .coTit .coLink'  )
-        temp2=q.select(
-            '.side .day'      )
-        temp3=q.select(
-            '.info .tit .link span'  )
-        temp4=q.select(
-            '.info .sTit span') #dept
-        temp5=q.select(
-            '.co .coDesc .coLyArea .btnItem .devType1000 span')
-        temp6=q.select(
-            '.co .coDesc .coLyArea .btnItem .devTypeExcellent span')
-        temp7=q.select(
-            '.sDesc strong')
-        temp8=q.select(
-            '.sDesc span')
-        temp9=q.select(
-            '.sDesc span:nth-of-type(2)')
-        temp10=q.select(
-            '.info .tit .link')
-        temp11=q.select( #dept2
-            '.info .sTit span:nth-of-type(2)'
-            )
-        temp12=q.select( #dept3
-             '.info .sTit span:nth-of-type(3)'
-            )
-        for temp in temp10:
-            link.append(temp.get('href'))
-        
-        name.append(temp1[0].string)
-        endday.append(temp2[0].string)
-        title.append(temp3[0].string)
-        dept.append(temp4[0].string)
-        if temp5:
-            coLevel.append(temp5[0].string)
-        elif temp6:
-            coLevel.append(temp6[0].string)
-        else :
-            coLevel.append('')
-        if temp12 :
-            dept3.append(temp12[0].string)
-            dept2.append(temp11[0].string)
-        elif temp11:
-            dept2.append(temp11[0].string)
-            dept3.append('')
-        else :
-            dept3.append('')
-            dept2.append('')
-        career.append(temp7[0].string)
-        edu.append(temp8[0].string)
-        region.append(temp9[0].string)
+
+
+
+
+
+####################################################################################
+
+for i in range(2):
+    if i==0 :
+        req = requests.get(urlpage)
+    elif i ==1 :
+        req= requests.get(urlpage2)
+    html = req.text
+    soup = BeautifulSoup(html, 'html.parser')
+    page = soup.select(
+        '.tplPagination > ul > li'
+        )
+
+    for pa in page:
+        if i==0 :
+            sendpage=urlpage+str(pa.text)
+        elif i ==1 :
+            sendpage=urlpage2+str(pa.text)
+        data = requests.get(sendpage)
+        rawdata = data.text
+        parser = BeautifulSoup(rawdata, 'html.parser')
+        realdata = parser.select(
+        '.filterList li'
+        )
+        for q in realdata:
+
+            temp1=q.select(
+                '.co .coTit .coLink'  )
+            temp2=q.select(
+                '.side .day'      )
+            temp3=q.select(
+                '.info .tit .link span'  )
+            temp4=q.select(
+                '.info .sTit span') #dept
+            temp5=q.select(
+                '.co .coDesc .coLyArea .btnItem .devType1000 span')
+            temp6=q.select(
+                '.co .coDesc .coLyArea .btnItem .devTypeExcellent span')
+            temp7=q.select(
+                '.sDesc strong')
+            temp8=q.select(
+                '.sDesc span')
+            temp9=q.select(
+                '.sDesc span:nth-of-type(2)')
+            temp10=q.select(
+                '.info .tit .link')
+            temp11=q.select( #dept2
+                '.info .sTit span:nth-of-type(2)'
+                )
+            temp12=q.select( #dept3
+                 '.info .sTit span:nth-of-type(3)'
+                )
+            for temp in temp10:
+                link.append(temp.get('href'))
+            
+            name.append(temp1[0].string)
+            endday.append(temp2[0].string)
+            title.append(temp3[0].string)
+            dept.append(temp4[0].string)
+            if temp5:
+                coLevel.append(temp5[0].string)
+            elif temp6:
+                coLevel.append(temp6[0].string)
+            else :
+                coLevel.append('')
+            if temp12 :
+                dept3.append(temp12[0].string)
+                dept2.append(temp11[0].string)
+            elif temp11:
+                dept2.append(temp11[0].string)
+                dept3.append('')
+            else :
+                dept3.append('')
+                dept2.append('')
+            career.append(temp7[0].string)
+            edu.append(temp8[0].string)
+            region.append(temp9[0].string)
 
      
 
-print(name)
+    print(name)
+
+
 
 # Create an new Excel file and add a worksheet.
 workbook = xlsxwriter.Workbook('sample.xlsx')
@@ -419,26 +442,7 @@ worksheet.write('AI1', '면접 후기(명사)')
 worksheet.write('AJ1', '자소서 질문(명사)')
 worksheet.write('AK1', '자소서 답안(명사)')
 
-# # 4. 각 문장별로 형태소 구분하기
-# sentences_tag = []
-# for sentence in okja:
-#     morph = twitter.pos(sentence)
-#     sentences_tag.append(morph)
-#     print(morph)
-#     print('-'*30)
 
-# print(sentences_tag)
-# print(len(sentences_tag))
-# print('\n'*3)
-
-# # 5. 명사 혹은 형용사인 품사만 선별해 리스트에 담기
-# noun_adj_list = []
-# for sentence1 in sentences_tag:
-#     for word, tag in sentence1:
-#         if tag in ['Noun','Adjective']:
-#             noun_adj_list.append(word)
-
-# print(noun_adj_list)
 
 number=0
 for ind in name:
