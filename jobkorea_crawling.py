@@ -43,9 +43,9 @@ cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_
 
 def get_cover_letter_Q(url):
     time.sleep(2.7)
-    #print('여기까지 옴'+url)
+
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    time.sleep(2)
+    #time.sleep(2)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -62,7 +62,7 @@ def get_cover_letter_A(url):
     time.sleep(2.5)
     #print('여기까지 옴22'+url)
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    time.sleep(2.6)
+    #time.sleep(2.6)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -95,7 +95,7 @@ def get_avg_salary(url):
         avg_salary.append('')
 
 def get_interview_Q(url):
-    print("url:"+url)
+    #print("url:"+url)
     x=url.find("review")
     if x!=-1:
         req=requests.get('http://www.jobkorea.co.kr'+url)
@@ -149,7 +149,7 @@ def get_interview_review(url):
 def get_main_content(url):
     time.sleep(2.8)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
-    time.sleep(2.5)
+    #time.sleep(2.5)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
     result = soupp.find_all('span',class_="score")
@@ -309,25 +309,41 @@ for i in range(2):
         req= requests.get(urlpage2)
     html = req.text
     soup = BeautifulSoup(html, 'html.parser')
-    page = soup.select(
-        '.tplPagination > ul > li'
-        )
 
-    for pa in page:
+    aa=''
+    if i==0:
+        a=soup.find("span",id="TabIngCount")
+        aa=a.get_text(strip=True, separator='-')
+        aa=str(aa).replace("(","").replace(")","").replace(",","")
+
+    if i==1:
+        a=soup.find("span",id="TabEndCount")
+        aa=a.get_text(strip=True, separator='-')
+        aa=str(aa).replace("(","").replace(")","").replace(",","")
+
+    page= int(int(aa)/40)+1
+    
+    for pa in range(page):
+
         if i==0 :
-            sendpage=urlpage+str(pa.text)
-        elif i ==1 :
-            sendpage=urlpage2+str(pa.text)
+
+            sendpage=urlpage+str(pa)
+        if i ==1 :
+
+            sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)
         rawdata = data.text
         parser = BeautifulSoup(rawdata, 'html.parser')
+
         realdata = parser.select(
         '.filterList li'
         )
+
         for q in realdata:
 
             temp1=q.select(
                 '.co .coTit .coLink'  )
+
             temp2=q.select(
                 '.side .day'      )
             temp3=q.select(
