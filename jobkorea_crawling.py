@@ -12,15 +12,20 @@ twitter = Twitter()
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 1개
 urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#마감된 공고
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-
-#마감된 공고 중 6개
-urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 190개 
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 50개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+
+
+#마감된 공고
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#마감된 공고 500개
+urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#마감된 공고 300개
+urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#마감된 공고 중 6개
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 name,endday,title,dept,dept2,dept3,coLevel,career,edu,region,link,comp_location=[],[],[],[],[],[],[],[],[],[],[],[]
 
@@ -42,7 +47,7 @@ candidate_num, avg_salary=[],[]
 cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_nouns=[],[],[],[]
 
 def get_cover_letter_Q(url):
-    time.sleep(2.7)
+    #time.sleep(2.7)
 
     req=requests.get('http://www.jobkorea.co.kr'+url)
     #time.sleep(2)
@@ -59,7 +64,7 @@ def get_cover_letter_Q(url):
 
 
 def get_cover_letter_A(url):
-    time.sleep(2.5)
+    #time.sleep(2.5)
     #print('여기까지 옴22'+url)
     req=requests.get('http://www.jobkorea.co.kr'+url)
     #time.sleep(2.6)
@@ -177,9 +182,13 @@ def get_main_content(url):
         tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7,tmp8,tmp9='','','','','','','','',''
 
     #회사 위치 가져오기
-    result1=soupp.find_all('a', title="새창")[3]
-    f=result1.get_text(strip=True, separator='-') 
-    comp_location.append(f)
+    try:
+        result1=soupp.find_all('a', title="새창")[3]
+        f=result1.get_text(strip=True, separator='-') 
+        comp_location.append(f)
+    except IndexError as e:
+        comp_location.append('')
+    
 
     #지원자 수 가져오기
     result4=soupp.find_all('div', class_="metrics metricsCount")
@@ -190,10 +199,13 @@ def get_main_content(url):
         candidate_num.append('')
 
     #연봉 정보가 있는 링크 받아오기
-    result5=soupp.find_all('a', class_="girBtn girBtn_3")
-    link=result5[len(result5)-1].get('href')
-    get_avg_salary(link)
-
+    try:
+        result5=soupp.find_all('a', class_="girBtn girBtn_3")
+        link=result5[len(result5)-1].get('href')
+        get_avg_salary(link)
+    except IndexError as e:
+        print(e)
+        avg_salary.append('')
     #면접후기 링크 가져오기
     result6=soupp.find_all('a', class_="linkList")
 
@@ -242,48 +254,56 @@ def get_main_content(url):
     cover_letter_Q.append(tmp_ar)
     cover_letter_A.append(tmp_arr)
 
-    result2=soupp.find_all('dl',class_="tbList")[3]
-    ff=result2.get_text(strip=True, separator='-') 
-
-
-    comp_industry.append(ff.split('-')[1])
-
-    split_list =ff.split('-')
-    if len(split_list)<=12:
-        if len(split_list)<=10:
-            comp_member_number.append('')
+    try: 
+        result2=soupp.find_all('dl',class_="tbList")[3]
+        ff=result2.get_text(strip=True, separator='-') 
+        comp_industry.append(ff.split('-')[1])
+        split_list =ff.split('-')
+        if len(split_list)<=12:
+            if len(split_list)<=10:
+                comp_member_number.append('')
+                comp_spec.append('')
+                comp_revenue.append('')
+                comp_year.append(ff.split('-')[3])
+                comp_level.append(ff.split('-')[8])
+            else:
+                comp_spec.append('')
+                comp_revenue.append('')
+                comp_member_number.append(ff.split('-')[3])
+                comp_year.append(ff.split('-')[6])
+                comp_level.append('') 
+        
+        elif ff.split('-')[12] =="매출액": #인증 대신 영업 이익만 있다면 
             comp_spec.append('')
-            comp_revenue.append('')
-            comp_year.append(ff.split('-')[3])
-            comp_level.append(ff.split('-')[8])
+            comp_revenue.append(ff.split('-')[13])
+            comp_member_number.append(ff.split('-')[3])
+            comp_year.append(ff.split('-')[6])
+            comp_level.append(ff.split('-')[11]) 
+        
         else:
-            comp_spec.append('')
-            comp_revenue.append('')
-            comp_member_number.append(ff.split('-')[3])
-            comp_year.append(ff.split('-')[6])
-            comp_level.append('') 
-    
-    elif ff.split('-')[12] =="매출액": #인증 대신 영업 이익만 있다면 
+            if len(split_list)<=14: #매출액 대신 인증만 있다면 
+                comp_spec.append(ff.split('-')[13])
+                comp_revenue.append('')
+                comp_member_number.append(ff.split('-')[3])
+                comp_year.append(ff.split('-')[6])
+                comp_level.append(ff.split('-')[11]) 
+        
+            else: #매츨액, 인증 둘 다 있다면 
+                comp_spec.append(ff.split('-')[13])
+                comp_revenue.append(ff.split('-')[15])
+                comp_member_number.append(ff.split('-')[3])
+                comp_year.append(ff.split('-')[6])
+                comp_level.append(ff.split('-')[11]) 
+    except IndexError as e:
+        comp_industry.append('')
+        comp_member_number.append('')
         comp_spec.append('')
-        comp_revenue.append(ff.split('-')[13])
-        comp_member_number.append(ff.split('-')[3])
-        comp_year.append(ff.split('-')[6])
-        comp_level.append(ff.split('-')[11]) 
+        comp_revenue.append('')
+        comp_year.append('')
+        comp_level.append('')
     
-    else:
-        if len(split_list)<=14: #매출액 대신 인증만 있다면 
-            comp_spec.append(ff.split('-')[13])
-            comp_revenue.append('')
-            comp_member_number.append(ff.split('-')[3])
-            comp_year.append(ff.split('-')[6])
-            comp_level.append(ff.split('-')[11]) 
+
     
-        else: #매츨액, 인증 둘 다 있다면 
-            comp_spec.append(ff.split('-')[13])
-            comp_revenue.append(ff.split('-')[15])
-            comp_member_number.append(ff.split('-')[3])
-            comp_year.append(ff.split('-')[6])
-            comp_level.append(ff.split('-')[11]) 
     
     emp_grade_score.append(tmp1)
     emp_toeic_score.append(tmp2)
@@ -348,8 +368,10 @@ for i in range(2):
                 '.side .day'      )
             temp3=q.select(
                 '.info .tit .link span'  )
+
             temp4=q.select(
                 '.info .sTit span') #dept
+ 
             temp5=q.select(
                 '.co .coDesc .coLyArea .btnItem .devType1000 span')
             temp6=q.select(
@@ -374,7 +396,12 @@ for i in range(2):
             name.append(temp1[0].string)
             endday.append(temp2[0].string)
             title.append(temp3[0].string)
-            dept.append(temp4[0].string)
+            
+            if temp4:
+                dept.append(temp4[0].string)
+            else:
+                dept.append('')
+
             if temp5:
                 coLevel.append(temp5[0].string)
             elif temp6:
