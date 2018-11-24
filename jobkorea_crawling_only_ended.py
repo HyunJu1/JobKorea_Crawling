@@ -321,108 +321,93 @@ def get_main_content(url):
 
 ####################################################################################
 try:
-    for i in range(2):
-        if i==0 :
-            req = requests.get(urlpage)
-        elif i ==1 :
-            req= requests.get(urlpage2)
-        html = req.text
-        soup = BeautifulSoup(html, 'html.parser')
+    req= requests.get(urlpage2)
+    html = req.text
+    soup = BeautifulSoup(html, 'html.parser')
 
-        aa=''
-        if i==0:
-            a=soup.find("span",id="TabIngCount")
-            aa=a.get_text(strip=True, separator='-')
-            aa=str(aa).replace("(","").replace(")","").replace(",","")
+ 
+    a=soup.find("span",id="TabEndCount")
+    aa=a.get_text(strip=True, separator='-')
+    aa=str(aa).replace("(","").replace(")","").replace(",","")
 
-        if i==1:
-            a=soup.find("span",id="TabEndCount")
-            aa=a.get_text(strip=True, separator='-')
-            aa=str(aa).replace("(","").replace(")","").replace(",","")
+    page= int(int(aa)/40)+1
+    
+    for pa in range(page):
 
-        page= int(int(aa)/40)+1
-        
-        for pa in range(page):
+        sendpage=urlpage2+str(pa+1)
+        data = requests.get(sendpage)
+        rawdata = data.text
+        parser = BeautifulSoup(rawdata, 'html.parser')
 
-            if i==0 :
+        realdata = parser.select(
+        '.filterList li'
+        )
 
-                sendpage=urlpage+str(pa)
-            if i ==1 :
+        for q in realdata:
 
-                sendpage=urlpage2+str(pa+1)
-            data = requests.get(sendpage)
-            rawdata = data.text
-            parser = BeautifulSoup(rawdata, 'html.parser')
+            temp1=q.select(
+                '.co .coTit .coLink'  )
 
-            realdata = parser.select(
-            '.filterList li'
-            )
+            temp2=q.select(
+                '.side .day'      )
+            temp3=q.select(
+                '.info .tit .link span'  )
 
-            for q in realdata:
+            temp4=q.select(
+                '.info .sTit span') #dept
+ 
+            temp5=q.select(
+                '.co .coDesc .coLyArea .btnItem .devType1000 span')
+            temp6=q.select(
+                '.co .coDesc .coLyArea .btnItem .devTypeExcellent span')
+            temp7=q.select(
+                '.sDesc strong')
+            temp8=q.select(
+                '.sDesc span')
+            temp9=q.select(
+                '.sDesc span:nth-of-type(2)')
+            temp10=q.select(
+                '.info .tit .link')
+            temp11=q.select( #dept2
+                '.info .sTit span:nth-of-type(2)'
+                )
+            temp12=q.select( #dept3
+                 '.info .sTit span:nth-of-type(3)'
+                )
+            for temp in temp10:
+                link.append(temp.get('href'))
+            
+            name.append(temp1[0].string)
+            endday.append(temp2[0].string)
+            title.append(temp3[0].string)
+            
+            if temp4:
+                dept.append(temp4[0].string)
+            else:
+                dept.append('')
 
-                temp1=q.select(
-                    '.co .coTit .coLink'  )
+            if temp5:
+                coLevel.append(temp5[0].string)
+            elif temp6:
+                coLevel.append(temp6[0].string)
+            else :
+                coLevel.append('')
+            if temp12 :
+                dept3.append(temp12[0].string)
+                dept2.append(temp11[0].string)
+            elif temp11:
+                dept2.append(temp11[0].string)
+                dept3.append('')
+            else :
+                dept3.append('')
+                dept2.append('')
+            career.append(temp7[0].string)
+            edu.append(temp8[0].string)
+            region.append(temp9[0].string)
 
-                temp2=q.select(
-                    '.side .day'      )
-                temp3=q.select(
-                    '.info .tit .link span'  )
-
-                temp4=q.select(
-                    '.info .sTit span') #dept
      
-                temp5=q.select(
-                    '.co .coDesc .coLyArea .btnItem .devType1000 span')
-                temp6=q.select(
-                    '.co .coDesc .coLyArea .btnItem .devTypeExcellent span')
-                temp7=q.select(
-                    '.sDesc strong')
-                temp8=q.select(
-                    '.sDesc span')
-                temp9=q.select(
-                    '.sDesc span:nth-of-type(2)')
-                temp10=q.select(
-                    '.info .tit .link')
-                temp11=q.select( #dept2
-                    '.info .sTit span:nth-of-type(2)'
-                    )
-                temp12=q.select( #dept3
-                     '.info .sTit span:nth-of-type(3)'
-                    )
-                for temp in temp10:
-                    link.append(temp.get('href'))
-                
-                name.append(temp1[0].string)
-                endday.append(temp2[0].string)
-                title.append(temp3[0].string)
-                
-                if temp4:
-                    dept.append(temp4[0].string)
-                else:
-                    dept.append('')
 
-                if temp5:
-                    coLevel.append(temp5[0].string)
-                elif temp6:
-                    coLevel.append(temp6[0].string)
-                else :
-                    coLevel.append('')
-                if temp12 :
-                    dept3.append(temp12[0].string)
-                    dept2.append(temp11[0].string)
-                elif temp11:
-                    dept2.append(temp11[0].string)
-                    dept3.append('')
-                else :
-                    dept3.append('')
-                    dept2.append('')
-                career.append(temp7[0].string)
-                edu.append(temp8[0].string)
-                region.append(temp9[0].string)
-
-         
-
-        print(name)
+    print(name)
 
 
 

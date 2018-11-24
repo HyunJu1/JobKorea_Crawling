@@ -22,4 +22,4 @@ df['회사 설립년도']=(pd.to_numeric(df['회사 설립년도'].replace(',','
 print(df.info())
 print(df.head())
 
-df.to_excel("sample5.xlsx")
+df.to_excel("result_350.xlsx")
