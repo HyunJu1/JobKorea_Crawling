@@ -5,7 +5,27 @@ import time
 import re
 from konlpy.tag import Twitter
 from konlpy.utils import pprint
+from rotatingproxy import RotatingProxy
+
+rproxy = RotatingProxy()
 twitter = Twitter()
+# select a random proxy server
+
+rproxy.set_proxy(israndom="r")
+
+# select proxy server with index=1 from the list of proxy servers.
+
+rproxy.set_proxy(proxy_num=1)
+
+def get_proxy_from_file():
+
+# fetches proxy from proxy.txt
+
+    with open("proxy.txt", "r") as f:
+
+        return loads(f.read())
+
+proxy = get_proxy_from_file()
 #결과물 5개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 800개
@@ -151,8 +171,8 @@ def get_interview_review(url):
         interview_review_nouns.append('')
 
 def get_main_content(url):
-    time.sleep(8)
-    reqq= requests.get('http://www.jobkorea.co.kr'+url)
+    time.sleep(2)
+    reqq= requests.get('http://www.jobkorea.co.kr'+url, proxies=proxy)
     #time.sleep(2.5)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
@@ -332,7 +352,7 @@ try:
 
     page= int(int(aa)/40)+1
     
-    for pa in range(page):
+    for pa in range(10,page):
 
         sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)
