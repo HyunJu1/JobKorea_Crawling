@@ -11,21 +11,21 @@ rproxy = RotatingProxy()
 twitter = Twitter()
 # select a random proxy server
 
-rproxy.set_proxy(israndom="r")
+#rproxy.set_proxy(israndom="r")
 
 # select proxy server with index=1 from the list of proxy servers.
 
-rproxy.set_proxy(proxy_num=1)
 
-def get_proxy_from_file():
+# def get_proxy_from_file():
 
-# fetches proxy from proxy.txt
+# # fetches proxy from proxy.txt
 
-    with open("proxy.txt", "r") as f:
+#     with open("proxy.txt", "r") as f:
 
-        return loads(f.read())
-
-proxy = get_proxy_from_file()
+#         return loads(f.read())
+#proxies = {'http': 'http://hyunju1:aa1234@us.proxymesh.com:31280', 'https': 'http://hyunju1:aa1234@us.proxymesh.com:31280'}
+proxies = {"http": "http://59.13.210.231:3128",
+           "https": "http://59.13.210.231:1080"}
 #결과물 5개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 800개
@@ -33,12 +33,12 @@ proxy = get_proxy_from_file()
 #결과물 1개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 190개 
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 50개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 #마감된 공고
-urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 500개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 300개
@@ -68,7 +68,7 @@ cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_
 def get_cover_letter_Q(url):
     #time.sleep(2.7)
 
-    req=requests.get('http://www.jobkorea.co.kr'+url)
+    req=requests.get('http://www.jobkorea.co.kr'+url, proxies=proxies)
     #time.sleep(2)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
@@ -85,7 +85,7 @@ def get_cover_letter_Q(url):
 def get_cover_letter_A(url):
     #time.sleep(2.5)
     #print('여기까지 옴22'+url)
-    req=requests.get('http://www.jobkorea.co.kr'+url)
+    req=requests.get('http://www.jobkorea.co.kr'+url, proxies=proxies)
     #time.sleep(2.6)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
@@ -107,7 +107,7 @@ def make_arr_to_str(arr):
         str1=str1+" "+t
     return str1
 def get_avg_salary(url):
-    req=requests.get('http://www.jobkorea.co.kr'+url)
+    req=requests.get('http://www.jobkorea.co.kr'+url, proxies=proxies)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -122,7 +122,7 @@ def get_interview_Q(url):
     #print("url:"+url)
     x=url.find("review")
     if x!=-1:
-        req=requests.get('http://www.jobkorea.co.kr'+url)
+        req=requests.get('http://www.jobkorea.co.kr'+url, proxies=proxies)
         html=req.text
         soup=BeautifulSoup(html,'html.parser')
         ss=soup.select('.reviewQnaWrap ul li')
@@ -146,9 +146,10 @@ def get_interview_Q(url):
 
 
 def get_interview_review(url):
+
     x=url.find("review")
     if x!=-1:
-        req=requests.get('http://www.jobkorea.co.kr'+url)
+        req=requests.get('http://www.jobkorea.co.kr'+url, proxies=proxies)
         html=req.text
         soup=BeautifulSoup(html,'html.parser')
         ss=soup.select('.reviewQnaWrap ul ')
@@ -171,8 +172,12 @@ def get_interview_review(url):
         interview_review_nouns.append('')
 
 def get_main_content(url):
-    time.sleep(2)
-    reqq= requests.get('http://www.jobkorea.co.kr'+url, proxies=proxy)
+    #rproxy.set_proxy(proxy_num=1)
+
+    #proxy = get_proxy_from_file()
+ 
+    time.sleep(1)
+    reqq= requests.get('http://www.jobkorea.co.kr'+url, proxies=proxies)
     #time.sleep(2.5)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
@@ -341,11 +346,10 @@ def get_main_content(url):
 
 ####################################################################################
 try:
-    req= requests.get(urlpage2)
+    req= requests.get(urlpage2, proxies=proxies)
     html = req.text
     soup = BeautifulSoup(html, 'html.parser')
 
- 
     a=soup.find("span",id="TabEndCount")
     aa=a.get_text(strip=True, separator='-')
     aa=str(aa).replace("(","").replace(")","").replace(",","")
@@ -355,7 +359,7 @@ try:
     for pa in range(10,page):
 
         sendpage=urlpage2+str(pa+1)
-        data = requests.get(sendpage)
+        data = requests.get(sendpage, proxies=proxies)
         rawdata = data.text
         parser = BeautifulSoup(rawdata, 'html.parser')
 
@@ -551,6 +555,6 @@ try:
         number=number+1
 
     workbook.close()
-except :
-    pass
+except Exception as e:
+    print(e)
     workbook.close()

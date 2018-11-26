@@ -1,0 +1,19 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import split,explode,col
+
+if __name__=="__main__":
+#연봉이 높은 순서대로 보여줌 
+        spark = SparkSession.builder.appName("OrderBySal").getOrCreate()
+        df1=spark.read.load("hdfs:///user/maria_dev/sample5.xlsx",format="xlsx", sep=",",inferSchema="true",header="true")
+      
+
+        df1.createOrReplaceTempView("sample")
+        #df2.select(df2.movieId, df2.title,explode(split(df2.genres, #'\|'))).createOrReplaceTempView("movies")
+
+        result = spark.sql("""
+                SELECT 회사 이름, 제목, 평균연봉
+                FROM sample
+                ORDER BY 평균연봉 DESC LIMIT 30
+                """)
+        for row in result.collect():
+                print(row.회사 이름 , row.제목, row.평균연봉)
