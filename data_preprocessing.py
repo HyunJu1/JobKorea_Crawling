@@ -30,7 +30,7 @@ df['cover_letter_A']=df['cover_letter_A'].str.replace(',','').str.replace('\n','
 df['interview_Q']=df['interview_Q'].str.replace(',','').str.replace('\n','')
 df['interview_review']=df['interview_review'].str.replace(',','').str.replace('\n','')
 
-df['endday']=df['endday'].str.replace('~','').str[0:10]
+df['endday']=df['endday'].str.replace('~','').str[0:10].str.replace('.','-')
 
 
 
