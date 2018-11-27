@@ -20,8 +20,15 @@ if df['comp_year'].any()=="년차)":
 
 df['comp_year']=(pd.to_numeric(df['comp_year'].replace(',',''), errors='coerce'))
 df['comp_spec']=df['comp_spec'].str.replace(',','-')
-df['comp_level']=df['comp_level'].str.replace('\n','').replace('\t','')
+df['comp_level']=df['comp_level'].str.replace('\n','').str.replace(' ','')
 #df['회사 영업이익']=(pd.to_numeric(df['회사 영업이익'].replace(',','').replace('억','').replace('천','000').replace('십','0'), errors='coerce'))
+df['comp_location']=''
+df['comp_revenue']=df['comp_revenue'].str.replace(',','')
+df['cover_letter_Q']=df['cover_letter_Q'].str.replace(',','').str.replace('\n','')
+df['cover_letter_A']=df['cover_letter_A'].str.replace(',','').str.replace('\n','')
+
+df['interview_Q']=df['interview_Q'].str.replace(',','').str.replace('\n','')
+df['interview_review']=df['interview_review'].str.replace(',','').str.replace('\n','')
 
 
 print(df.info())
