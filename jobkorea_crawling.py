@@ -505,7 +505,7 @@ try:
         worksheet.write(number+1, 8, edu[number])
         worksheet.write(number+1, 9, region[number])
         
-        worksheet.write(number+1, 10, comp_location[number])
+        #worksheet.write(number+1, 10, comp_location[number])
         worksheet.write(number+1, 11, link[number])
 
         worksheet.write(number+1, 12, emp_grade_score[number])
@@ -549,6 +549,6 @@ try:
         number=number+1
 
     workbook.close()
-except :
-    pass
+except Exception as e:
+    print(e)
     workbook.close()
