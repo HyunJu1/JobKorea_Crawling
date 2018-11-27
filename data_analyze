@@ -1,4 +1,7 @@
 
+### spark 에서 연봉 순대로 보여주기
+
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import split,explode,col
 
@@ -16,4 +19,7 @@ if __name__=="__main__":
                 """)
         for row in result.collect():
                 print(row.name , row.title, row.avg_salary)
+
+## Hive 에서 연봉 순대로 보여주기 
+
 
