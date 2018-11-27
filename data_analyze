@@ -23,3 +23,48 @@ if __name__=="__main__":
 ## Hive 에서 연봉 순대로 보여주기 
 
 
+CREATE TABLE sample_5201(
+  name string, 
+  endday string, 
+  title string, 
+  dept string, 
+  dept2 string, 
+  dept3 string, 
+  colevel string, 
+  career string, 
+  edu string, 
+  region string, 
+  comp_location string, 
+  link string, 
+  emp_grade_score double, 
+  emp_toeic_score double, 
+  emp_ts_score double, 
+  emp_opic_score double, 
+  emp_etcl_score double, 
+  emp_license_score double, 
+  emp_othercountry_score double, 
+  emp_intern_score double, 
+  emp_award_score string, 
+  comp_industry string, 
+  comp_member_number double, 
+  comp_year string, 
+  comp_level string, 
+  comp_spec string, 
+  comp_revenue string, 
+  cover_letter_q string, 
+  cover_letter_a string, 
+  candidate_num string, 
+  avg_salary int, 
+  interview_q string, 
+  interview_review string, 
+  interview_q_nouns string, 
+  interview_review_nouns string, 
+  cover_letter_q_nouns string, 
+  cover_letter_a_nouns string)
+
+row format delimited fields terminated BY ',' lines terminated BY '\n'
+tblproperties("skip.header.line.count="="1");
+LOAD DATA INPATH '/user/maria_dev/result_5200_test.csv' OVERWRITE INTO TABLE sample_5201;
+
+
+select * from sample_5201 limit 20;

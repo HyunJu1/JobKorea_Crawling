@@ -30,8 +30,11 @@ df['cover_letter_A']=df['cover_letter_A'].str.replace(',','').str.replace('\n','
 df['interview_Q']=df['interview_Q'].str.replace(',','').str.replace('\n','')
 df['interview_review']=df['interview_review'].str.replace(',','').str.replace('\n','')
 
+df['endday']=df['endday'].str.replace('~','').str[0:10]
+
+
 
 print(df.info())
 print(df.head())
 
-df.to_excel("result_5200_test.xlsx",encoding="utf-8")
+df.to_excel("result_5200_test1.xlsx",encoding="utf-8")
