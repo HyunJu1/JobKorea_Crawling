@@ -151,14 +151,14 @@ def get_interview_review(url):
         interview_review_nouns.append('')
 
 def get_main_content(url):
-    time.sleep(6)
+    time.sleep(2)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     #time.sleep(2.5)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
     result = soupp.find_all('span',class_="score")
     if result:
-        final = result[0].get_text(strip=True, separator='-') 
+        final =  result[0].get_text(strip=True, separator='-') 
         final1 = result[1].get_text(strip=True, separator='-')
         final2 = result[2].get_text(strip=True, separator='-')
         final3 = result[3].get_text(strip=True, separator='-') 

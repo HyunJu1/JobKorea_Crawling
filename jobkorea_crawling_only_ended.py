@@ -38,9 +38,9 @@ twitter = Twitter()
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 #마감된 공고
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#마감된 공고 500개
-urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+##마감된 공고 500개
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 300개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 중 6개
@@ -83,8 +83,7 @@ def get_cover_letter_Q(url):
 
 
 def get_cover_letter_A(url):
-    #time.sleep(2.5)
-    #print('여기까지 옴22'+url)
+
     req=requests.get('http://www.jobkorea.co.kr'+url)
     #time.sleep(2.6)
     html=req.text
@@ -176,7 +175,7 @@ def get_main_content(url):
 
     #proxy = get_proxy_from_file()
  
-    time.sleep(1)
+    time.sleep(6)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     #time.sleep(2.5)
     htmll = reqq.text
@@ -356,7 +355,7 @@ try:
 
     page= int(int(aa)/40)+1
     
-    for pa in range(10,page):
+    for pa in range(84,page):
 
         sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)
@@ -367,10 +366,12 @@ try:
         '.filterList li'
         )
 
+
         for q in realdata:
 
             temp1=q.select(
                 '.co .coTit .coLink'  )
+
 
             temp2=q.select(
                 '.side .day'      )
@@ -449,49 +450,48 @@ try:
     # Add a bold format to use to highlight cells.
     bold = workbook.add_format({'bold': True})
 
-    # Write some simple text.
-    worksheet.write('A1', '회사 이름')
-    worksheet.write('B1', '지원서 마감일자')
-    worksheet.write('C1', '제목')
-    worksheet.write('D1', '직무')
-    worksheet.write('E1', '직무2')
-    worksheet.write('F1', '직무3')
-    worksheet.write('G1', '기업스펙')
-    worksheet.write('H1', '요구 경력')
-    worksheet.write('I1', '요구 학력')
-    worksheet.write('J1', '지역')
-    worksheet.write('K1', '상세 지역')
-    worksheet.write('L1', '상세페이지 링크')
+    worksheet.write('A1', 'title')
+    worksheet.write('B1', 'endday')
+    worksheet.write('C1', 'title')
+    worksheet.write('D1', 'dept')
+    worksheet.write('E1', 'dept2')
+    worksheet.write('F1', 'dept3')
+    worksheet.write('G1', 'coLevel')
+    worksheet.write('H1', 'career')
+    worksheet.write('I1', 'edu')
+    worksheet.write('J1', 'region')
+    worksheet.write('K1', 'comp_location')
+    worksheet.write('L1', 'link')
 
-    worksheet.write('M1', '합격자 학점')
-    worksheet.write('N1', '합격자 토익')
-    worksheet.write('O1', '합격자 토익스피킹')
-    worksheet.write('P1', '합격자 오픽')
-    worksheet.write('Q1', '합격자 외국어(기타)')
-    worksheet.write('R1', '합격자 자격증개수')
-    worksheet.write('S1', '합격자 해외경험')
-    worksheet.write('T1', '합격자 인턴')
-    worksheet.write('U1', '합격자 수상횟수')
+    worksheet.write('M1', 'emp_grade_score')
+    worksheet.write('N1', 'emp_toeic_score')
+    worksheet.write('O1', 'emp_ts_score')
+    worksheet.write('P1', 'emp_opic_score')
+    worksheet.write('Q1', 'emp_etcL_score')
+    worksheet.write('R1', 'emp_license_score')
+    worksheet.write('S1', 'emp_otherCountry_score')
+    worksheet.write('T1', 'emp_intern_score')
+    worksheet.write('U1', 'emp_award_score')
 
-    worksheet.write('V1', '회사 산업분야')
-    worksheet.write('W1', '회사 직원 수')
-    worksheet.write('X1', '회사 설립년도')
-    worksheet.write('Y1', '회사 규모')
-    worksheet.write('Z1', '회사 스펙')
-    worksheet.write('AA1', '회사 영업이익')
+    worksheet.write('V1', 'comp_industry')
+    worksheet.write('W1', 'comp_member_number')
+    worksheet.write('X1', 'comp_year')
+    worksheet.write('Y1', 'comp_level')
+    worksheet.write('Z1', 'comp_spec')
+    worksheet.write('AA1', 'comp_revenue')
 
-    worksheet.write('AB1', '자소서 질문')
-    worksheet.write('AC1', '합격 자소서 답안')
+    worksheet.write('AB1', 'cover_letter_Q')
+    worksheet.write('AC1', 'cover_letter_A')
 
-    worksheet.write('AD1', '지원자 수')
-    worksheet.write('AE1', '평균 연봉')
+    worksheet.write('AD1', 'candidate_num')
+    worksheet.write('AE1', 'avg_salary')
 
-    worksheet.write('AF1', '면접 질문')
-    worksheet.write('AG1', '면접 후기')
-    worksheet.write('AH1', '면접 질문(명사)')
-    worksheet.write('AI1', '면접 후기(명사)')
-    worksheet.write('AJ1', '자소서 질문(명사)')
-    worksheet.write('AK1', '자소서 답안(명사)')
+    worksheet.write('AF1', 'interview_Q')
+    worksheet.write('AG1', 'interview_review')
+    worksheet.write('AH1', 'interview_Q_nouns')
+    worksheet.write('AI1', 'interview_review_nouns')
+    worksheet.write('AJ1', 'cover_letter_Q_nouns')
+    worksheet.write('AK1', 'cover_letter_A_nouns')
 
 
 
