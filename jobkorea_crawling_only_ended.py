@@ -66,10 +66,7 @@ candidate_num, avg_salary=[],[]
 cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_nouns=[],[],[],[]
 
 def get_cover_letter_Q(url):
-    #time.sleep(2.7)
-
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    #time.sleep(2)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -85,7 +82,6 @@ def get_cover_letter_Q(url):
 def get_cover_letter_A(url):
 
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    #time.sleep(2.6)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -118,7 +114,6 @@ def get_avg_salary(url):
         avg_salary.append('')
 
 def get_interview_Q(url):
-    #print("url:"+url)
     x=url.find("review")
     if x!=-1:
         req=requests.get('http://www.jobkorea.co.kr'+url)
@@ -171,13 +166,10 @@ def get_interview_review(url):
         interview_review_nouns.append('')
 
 def get_main_content(url):
-    #rproxy.set_proxy(proxy_num=1)
 
-    #proxy = get_proxy_from_file()
  
     time.sleep(6)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
-    #time.sleep(2.5)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
     result = soupp.find_all('span',class_="score")
@@ -355,7 +347,7 @@ try:
 
     page= int(int(aa)/40)+1
     
-    for pa in range(84,page):
+    for pa in range(174,page):
 
         sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)

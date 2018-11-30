@@ -46,10 +46,7 @@ candidate_num, avg_salary=[],[]
 cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_nouns=[],[],[],[]
 
 def get_cover_letter_Q(url):
-    #time.sleep(2.7)
-
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    #time.sleep(2)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -63,10 +60,8 @@ def get_cover_letter_Q(url):
 
 
 def get_cover_letter_A(url):
-    #time.sleep(2.5)
-    #print('여기까지 옴22'+url)
+
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    #time.sleep(2.6)
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -99,7 +94,6 @@ def get_avg_salary(url):
         avg_salary.append('')
 
 def get_interview_Q(url):
-    #print("url:"+url)
     x=url.find("review")
     if x!=-1:
         req=requests.get('http://www.jobkorea.co.kr'+url)
@@ -112,9 +106,7 @@ def get_interview_Q(url):
             realdata = s.find_all('span',class_="tx")
     
             for i in realdata:
-
                 final = i.get_text(strip=True, separator='-') 
-
                 tmp=make_arr_to_str(twitter.nouns(final))
                 temp_ss=temp_ss+tmp
                 temp_s=temp_s+final
@@ -139,8 +131,7 @@ def get_interview_review(url):
             for i in realdata:
                 final = i.get_text(strip=True, separator='-') 
 
-                tmp=make_arr_to_str(twitter.nouns(final)) 
-                
+                tmp=make_arr_to_str(twitter.nouns(final))                
          
                 temp_s=temp_s+final
                 temp_ss=temp_ss+tmp
@@ -153,7 +144,6 @@ def get_interview_review(url):
 def get_main_content(url):
     time.sleep(2)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
-    #time.sleep(2.5)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
     result = soupp.find_all('span',class_="score")
@@ -314,12 +304,8 @@ def get_main_content(url):
     emp_intern_score.append(tmp8)
     emp_award_score.append(tmp9)
 
-
-
-
-
-
 ####################################################################################
+
 try:
     for i in range(2):
         if i==0 :
