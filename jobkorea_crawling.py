@@ -46,28 +46,32 @@ candidate_num, avg_salary=[],[]
 cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_nouns=[],[],[],[]
 
 def get_cover_letter_Q(url):
-    req=requests.get('http://www.jobkorea.co.kr'+url)
-    html=req.text
-    soup=BeautifulSoup(html,'html.parser')
+    try:
+        req=requests.get('http://www.jobkorea.co.kr'+url)
+        html=req.text
+        soup=BeautifulSoup(html,'html.parser')
 
-    realdata = soup.select(
-    '.cont .bx ul '
-    )
-    for r in realdata:
-        tt1= r.select('li')
-        tt1=make_context(tt1)
-        return tt1
-
+        realdata = soup.select(
+        '.cont .bx ul '
+        )
+        for r in realdata:
+            tt1= r.select('li')
+            tt1=make_context(tt1)
+            return tt1
+    except Exception as e:
+        pass
 
 def get_cover_letter_A(url):
+    try:
+        req=requests.get('http://www.jobkorea.co.kr'+url)
+        html=req.text
+        soup=BeautifulSoup(html,'html.parser')
 
-    req=requests.get('http://www.jobkorea.co.kr'+url)
-    html=req.text
-    soup=BeautifulSoup(html,'html.parser')
-
-    realdata=soup.find_all('div',class_='tx')
-    str1=make_context(realdata)
-    return str1
+        realdata=soup.find_all('div',class_='tx')
+        str1=make_context(realdata)
+        return str1
+    except Exception as e:
+        pass
 
 
 def make_context(arr):
@@ -94,52 +98,65 @@ def get_avg_salary(url):
         avg_salary.append('')
 
 def get_interview_Q(url):
-    x=url.find("review")
-    if x!=-1:
-        req=requests.get('http://www.jobkorea.co.kr'+url)
-        html=req.text
-        soup=BeautifulSoup(html,'html.parser')
-        ss=soup.select('.reviewQnaWrap ul li')
-        temp_s=''
-        temp_ss=''
-        for s in ss:
-            realdata = s.find_all('span',class_="tx")
-    
-            for i in realdata:
-                final = i.get_text(strip=True, separator='-') 
-                tmp=make_arr_to_str(twitter.nouns(final))
-                temp_ss=temp_ss+tmp
-                temp_s=temp_s+final
-        interview_Q_nouns.append(temp_ss)
-        interview_Q.append(temp_s)
-    else:
+    try:
+        x=url.find("review")
+        if x!=-1:
+            req=requests.get('http://www.jobkorea.co.kr'+url)
+            html=req.text
+            soup=BeautifulSoup(html,'html.parser')
+            ss=soup.select('.reviewQnaWrap ul li')
+            temp_s=''
+            temp_ss=''
+            for s in ss:
+                realdata = s.find_all('span',class_="tx")
+        
+                for i in realdata:
+
+                    final = i.get_text(strip=True, separator='-') 
+
+                    tmp=make_arr_to_str(twitter.nouns(final))
+                    temp_ss=temp_ss+tmp
+                    temp_s=temp_s+final
+            interview_Q_nouns.append(temp_ss)
+            interview_Q.append(temp_s)
+        else:
+            interview_Q.append('')
+            interview_Q_nouns.append('')
+    except Exception as e:
         interview_Q.append('')
         interview_Q_nouns.append('')
+        pass
 
 
 def get_interview_review(url):
-    x=url.find("review")
-    if x!=-1:
-        req=requests.get('http://www.jobkorea.co.kr'+url)
-        html=req.text
-        soup=BeautifulSoup(html,'html.parser')
-        ss=soup.select('.reviewQnaWrap ul ')
-        temp_s=''
-        temp_ss=''
-        for s in ss:
-            realdata = s.find_all('p')
-            for i in realdata:
-                final = i.get_text(strip=True, separator='-') 
+    try:
+        x=url.find("review")
+        if x!=-1:
+            req=requests.get('http://www.jobkorea.co.kr'+url)
+            html=req.text
+            soup=BeautifulSoup(html,'html.parser')
+            ss=soup.select('.reviewQnaWrap ul ')
+            temp_s=''
+            temp_ss=''
+            for s in ss:
+                realdata = s.find_all('p')
+                for i in realdata:
+                    final = i.get_text(strip=True, separator='-') 
 
-                tmp=make_arr_to_str(twitter.nouns(final))                
-         
-                temp_s=temp_s+final
-                temp_ss=temp_ss+tmp
-        interview_review.append(temp_s)
-        interview_review_nouns.append(temp_ss)
-    else:
+                    tmp=make_arr_to_str(twitter.nouns(final)) 
+                    
+             
+                    temp_s=temp_s+final
+                    temp_ss=temp_ss+tmp
+            interview_review.append(temp_s)
+            interview_review_nouns.append(temp_ss)
+        else:
+            interview_review.append('')
+            interview_review_nouns.append('')
+    except Exception as e:
         interview_review.append('')
         interview_review_nouns.append('')
+        pass
 
 def get_main_content(url):
     time.sleep(2)
@@ -226,22 +243,28 @@ def get_main_content(url):
         interview_review.append('')
         interview_review_nouns.append('')
 
-
     tmp_ar=''
     tmp_arr=''
     tmp11= soupp.select('.devStartlist.listArea.pAssayList ul li')
     temp2=''
-    for t in tmp11:
-        temp11 =t.select('.tx a')
+    try:
+        for t in tmp11:
+            temp11 =t.select('.tx a')
 
-        tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
-        for y in temp11:
-            tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
+            tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
+            for y in temp11:
+                tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
 
-    cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
-    cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
-    cover_letter_Q.append(tmp_ar)
-    cover_letter_A.append(tmp_arr)
+        cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
+        cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
+        cover_letter_Q.append(tmp_ar)
+        cover_letter_A.append(tmp_arr)
+    except Exception as e:
+        cover_letter_Q_nouns.append('')
+        cover_letter_Q.append('')
+        cover_letter_A_nouns.append('')
+        cover_letter_A.append('')
+        pass
 
     try: 
         result2=soupp.find_all('dl',class_="tbList")[3]

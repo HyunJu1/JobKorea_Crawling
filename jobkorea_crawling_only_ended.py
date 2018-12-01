@@ -38,13 +38,13 @@ twitter = Twitter()
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 #마감된 공고
-urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 ##마감된 공고 500개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 300개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 중 6개
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 name,endday,title,dept,dept2,dept3,coLevel,career,edu,region,link,comp_location=[],[],[],[],[],[],[],[],[],[],[],[]
 
@@ -180,7 +180,7 @@ def get_interview_review(url):
 def get_main_content(url):
 
  
-    time.sleep(7)
+    time.sleep(3)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
@@ -269,17 +269,24 @@ def get_main_content(url):
     tmp_arr=''
     tmp11= soupp.select('.devStartlist.listArea.pAssayList ul li')
     temp2=''
-    for t in tmp11:
-        temp11 =t.select('.tx a')
+    try:
+        for t in tmp11:
+            temp11 =t.select('.tx a')
 
-        tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
-        for y in temp11:
-            tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
+            tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
+            for y in temp11:
+                tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
 
-    cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
-    cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
-    cover_letter_Q.append(tmp_ar)
-    cover_letter_A.append(tmp_arr)
+        cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
+        cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
+        cover_letter_Q.append(tmp_ar)
+        cover_letter_A.append(tmp_arr)
+    except Exception as e:
+        cover_letter_Q_nouns.append('')
+        cover_letter_Q.append('')
+        cover_letter_A_nouns.append('')
+        cover_letter_A.append('')
+        pass
 
     try: 
         result2=soupp.find_all('dl',class_="tbList")[3]
@@ -321,6 +328,7 @@ def get_main_content(url):
                 comp_member_number.append(ff.split('-')[3])
                 comp_year.append(ff.split('-')[6])
                 comp_level.append(ff.split('-')[11]) 
+
     except IndexError as e:
         comp_industry.append('')
         comp_member_number.append('')
@@ -557,6 +565,7 @@ try:
         number=number+1
 
     workbook.close()
+
 except Exception as e:
     print(e)
     workbook.close()
