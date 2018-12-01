@@ -5,27 +5,9 @@ import time
 import re
 from konlpy.tag import Twitter
 from konlpy.utils import pprint
-# from rotatingproxy import RotatingProxy
 
-# rproxy = RotatingProxy()
 twitter = Twitter()
-# select a random proxy server
 
-#rproxy.set_proxy(israndom="r")
-
-# select proxy server with index=1 from the list of proxy servers.
-
-
-# def get_proxy_from_file():
-
-# # fetches proxy from proxy.txt
-
-#     with open("proxy.txt", "r") as f:
-
-#         return loads(f.read())
-#proxies = {'http': 'http://hyunju1:aa1234@us.proxymesh.com:31280', 'https': 'http://hyunju1:aa1234@us.proxymesh.com:31280'}
-# proxies = {"http": "http://59.13.210.231:3128",
-#            "https": "http://59.13.210.231:1080"}
 #결과물 5개
 #urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 800개
@@ -38,13 +20,13 @@ twitter = Twitter()
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 #마감된 공고
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 ##마감된 공고 500개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 300개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 중 6개
-urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 name,endday,title,dept,dept2,dept3,coLevel,career,edu,region,link,comp_location=[],[],[],[],[],[],[],[],[],[],[],[]
 
@@ -177,10 +159,10 @@ def get_interview_review(url):
         interview_review.append('')
         interview_review_nouns.append('')
         pass
+
 def get_main_content(url):
 
- 
-    #time.sleep(1)
+    time.sleep(8)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
@@ -344,45 +326,6 @@ def get_main_content(url):
         pass
     
 
-
-        # if len(split_list)<=12:
-        #     if len(split_list)<=10:
-        #         comp_member_number.append('')
-        #         comp_spec.append('')
-        #         comp_revenue.append('')
-        #         comp_year.append(ff.split('-')[3])
-        #         comp_level.append(ff.split('-')[8])
-        #     else:
-        #         comp_spec.append('')
-        #         comp_revenue.append('')
-        #         comp_member_number.append(ff.split('-')[3])
-        #         comp_year.append(ff.split('-')[6])
-        #         comp_level.append('') 
-        
-        # elif ff.split('-')[12] =="매출액": #인증 대신 영업 이익만 있다면 
-        #     comp_spec.append('')
-        #     comp_revenue.append(ff.split('-')[13])
-        #     comp_member_number.append(ff.split('-')[3])
-        #     comp_year.append(ff.split('-')[6])
-        #     comp_level.append(ff.split('-')[11]) 
-        
-        # else:
-        #     if len(split_list)<=14: #매출액 대신 인증만 있다면 
-        #         comp_spec.append(ff.split('-')[13])
-        #         comp_revenue.append('')
-        #         comp_member_number.append(ff.split('-')[3])
-        #         comp_year.append(ff.split('-')[6])
-        #         comp_level.append(ff.split('-')[11]) 
-        
-        #     else: #매츨액, 인증 둘 다 있다면 
-        #         comp_spec.append(ff.split('-')[13])
-        #         comp_revenue.append(ff.split('-')[15])
-        #         comp_member_number.append(ff.split('-')[3])
-        #         comp_year.append(ff.split('-')[6])
-        #         comp_level.append(ff.split('-')[11]) 
-
-
-    
     
     emp_grade_score.append(tmp1)
     emp_toeic_score.append(tmp2)
