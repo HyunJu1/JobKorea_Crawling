@@ -180,7 +180,7 @@ def get_interview_review(url):
 def get_main_content(url):
 
  
-    time.sleep(3)
+    #time.sleep(1)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
@@ -292,51 +292,95 @@ def get_main_content(url):
         result2=soupp.find_all('dl',class_="tbList")[3]
         ff=result2.get_text(strip=True, separator='-') 
         comp_industry.append(ff.split('-')[1])
-        split_list =ff.split('-')
-        if len(split_list)<=12:
-            if len(split_list)<=10:
-                comp_member_number.append('')
-                comp_spec.append('')
-                comp_revenue.append('')
-                comp_year.append(ff.split('-')[3])
-                comp_level.append(ff.split('-')[8])
-            else:
-                comp_spec.append('')
-                comp_revenue.append('')
-                comp_member_number.append(ff.split('-')[3])
-                comp_year.append(ff.split('-')[6])
-                comp_level.append('') 
-        
-        elif ff.split('-')[12] =="매출액": #인증 대신 영업 이익만 있다면 
-            comp_spec.append('')
-            comp_revenue.append(ff.split('-')[13])
-            comp_member_number.append(ff.split('-')[3])
-            comp_year.append(ff.split('-')[6])
-            comp_level.append(ff.split('-')[11]) 
-        
-        else:
-            if len(split_list)<=14: #매출액 대신 인증만 있다면 
-                comp_spec.append(ff.split('-')[13])
-                comp_revenue.append('')
-                comp_member_number.append(ff.split('-')[3])
-                comp_year.append(ff.split('-')[6])
-                comp_level.append(ff.split('-')[11]) 
-        
-            else: #매츨액, 인증 둘 다 있다면 
-                comp_spec.append(ff.split('-')[13])
-                comp_revenue.append(ff.split('-')[15])
-                comp_member_number.append(ff.split('-')[3])
-                comp_year.append(ff.split('-')[6])
-                comp_level.append(ff.split('-')[11]) 
 
+        split_list =ff.split('-')
+        #print(split_list)
+        num=0
+        i="ABCDE"
+        while num < len(split_list):
+            print(split_list[num])
+            if split_list[num]=="사원수":
+                #print("여기까지 옴")
+                i=i.replace('A','')
+                
+                comp_member_number.append(split_list[num+1])
+                
+            if split_list[num]=="설립": 
+                i=i.replace('B','')
+                comp_year.append(split_list[num+1])
+                
+            if split_list[num]=="기업형태":
+                i=i.replace('C','')
+                comp_level.append(split_list[num+1])
+                
+            if split_list[num]=="인증":
+                i=i.replace('D','')
+                comp_spec.append(split_list[num+1])
+                
+            if split_list[num]=="매출액":
+                i=i.replace('E','')
+                comp_revenue.append(split_list[num+1])
+                
+            num+=1
+        print(i)
+        if i.find('A')==-1:
+            comp_member_number.append('')
+        if i.find('B')==-1:
+            comp_spec.append('')
+        if i.find('C')==-1:
+            comp_revenue.append('')
+        if i.find('D')==-1:
+           comp_year.append('') 
+        if i.find('E')==-1:   
+            comp_revenue.append('')
     except IndexError as e:
+        print("악"+e)
         comp_industry.append('')
         comp_member_number.append('')
         comp_spec.append('')
         comp_revenue.append('')
         comp_year.append('')
         comp_level.append('')
+        pass
     
+
+
+        # if len(split_list)<=12:
+        #     if len(split_list)<=10:
+        #         comp_member_number.append('')
+        #         comp_spec.append('')
+        #         comp_revenue.append('')
+        #         comp_year.append(ff.split('-')[3])
+        #         comp_level.append(ff.split('-')[8])
+        #     else:
+        #         comp_spec.append('')
+        #         comp_revenue.append('')
+        #         comp_member_number.append(ff.split('-')[3])
+        #         comp_year.append(ff.split('-')[6])
+        #         comp_level.append('') 
+        
+        # elif ff.split('-')[12] =="매출액": #인증 대신 영업 이익만 있다면 
+        #     comp_spec.append('')
+        #     comp_revenue.append(ff.split('-')[13])
+        #     comp_member_number.append(ff.split('-')[3])
+        #     comp_year.append(ff.split('-')[6])
+        #     comp_level.append(ff.split('-')[11]) 
+        
+        # else:
+        #     if len(split_list)<=14: #매출액 대신 인증만 있다면 
+        #         comp_spec.append(ff.split('-')[13])
+        #         comp_revenue.append('')
+        #         comp_member_number.append(ff.split('-')[3])
+        #         comp_year.append(ff.split('-')[6])
+        #         comp_level.append(ff.split('-')[11]) 
+        
+        #     else: #매츨액, 인증 둘 다 있다면 
+        #         comp_spec.append(ff.split('-')[13])
+        #         comp_revenue.append(ff.split('-')[15])
+        #         comp_member_number.append(ff.split('-')[3])
+        #         comp_year.append(ff.split('-')[6])
+        #         comp_level.append(ff.split('-')[11]) 
+
 
     
     
@@ -365,7 +409,7 @@ try:
 
     page= int(int(aa)/40)+1
     
-    for pa in range(182,page):
+    for pa in range(0,page):
 
         sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)
