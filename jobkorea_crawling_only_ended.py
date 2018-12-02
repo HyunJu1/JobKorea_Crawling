@@ -21,7 +21,7 @@ twitter = Twitter()
 
 #마감된 공고
 urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-##마감된 공고 500개
+#마감된 공고 500개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 300개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
@@ -48,32 +48,33 @@ candidate_num, avg_salary=[],[]
 cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_nouns=[],[],[],[]
 
 def get_cover_letter_Q(url):
-    try:
-        req=requests.get('http://www.jobkorea.co.kr'+url)
-        html=req.text
-        soup=BeautifulSoup(html,'html.parser')
+    #time.sleep(2.7)
 
-        realdata = soup.select(
-        '.cont .bx ul '
-        )
-        for r in realdata:
-            tt1= r.select('li')
-            tt1=make_context(tt1)
-            return tt1
-    except Exception as e:
-        pass
+    req=requests.get('http://www.jobkorea.co.kr'+url)
+    #time.sleep(2)
+    html=req.text
+    soup=BeautifulSoup(html,'html.parser')
+
+    realdata = soup.select(
+    '.cont .bx ul '
+    )
+    for r in realdata:
+        tt1= r.select('li')
+        tt1=make_context(tt1)
+        return tt1
+
 
 def get_cover_letter_A(url):
-    try:
-        req=requests.get('http://www.jobkorea.co.kr'+url)
-        html=req.text
-        soup=BeautifulSoup(html,'html.parser')
+    #time.sleep(2.5)
+    #print('여기까지 옴22'+url)
+    req=requests.get('http://www.jobkorea.co.kr'+url)
+    #time.sleep(2.6)
+    html=req.text
+    soup=BeautifulSoup(html,'html.parser')
 
-        realdata=soup.find_all('div',class_='tx')
-        str1=make_context(realdata)
-        return str1
-    except Exception as e:
-        pass
+    realdata=soup.find_all('div',class_='tx')
+    str1=make_context(realdata)
+    return str1
 
 
 def make_context(arr):
@@ -100,266 +101,233 @@ def get_avg_salary(url):
         avg_salary.append('')
 
 def get_interview_Q(url):
-    try:
-        x=url.find("review")
-        if x!=-1:
-            req=requests.get('http://www.jobkorea.co.kr'+url)
-            html=req.text
-            soup=BeautifulSoup(html,'html.parser')
-            ss=soup.select('.reviewQnaWrap ul li')
-            temp_s=''
-            temp_ss=''
-            for s in ss:
-                realdata = s.find_all('span',class_="tx")
-        
-                for i in realdata:
+    #print("url:"+url)
+    x=url.find("review")
+    if x!=-1:
+        req=requests.get('http://www.jobkorea.co.kr'+url)
+        html=req.text
+        soup=BeautifulSoup(html,'html.parser')
+        ss=soup.select('.reviewQnaWrap ul li')
+        temp_s=''
+        temp_ss=''
+        for s in ss:
+            realdata = s.find_all('span',class_="tx")
+    
+            for i in realdata:
 
-                    final = i.get_text(strip=True, separator='-') 
+                final = i.get_text(strip=True, separator='-') 
 
-                    tmp=make_arr_to_str(twitter.nouns(final))
-                    temp_ss=temp_ss+tmp
-                    temp_s=temp_s+final
-            interview_Q_nouns.append(temp_ss)
-            interview_Q.append(temp_s)
-        else:
-            interview_Q.append('')
-            interview_Q_nouns.append('')
-    except Exception as e:
+                tmp=make_arr_to_str(twitter.nouns(final))
+                temp_ss=temp_ss+tmp
+                temp_s=temp_s+final
+        interview_Q_nouns.append(temp_ss)
+        interview_Q.append(temp_s)
+    else:
         interview_Q.append('')
         interview_Q_nouns.append('')
-        pass
 
 
 def get_interview_review(url):
-    try:
-        x=url.find("review")
-        if x!=-1:
-            req=requests.get('http://www.jobkorea.co.kr'+url)
-            html=req.text
-            soup=BeautifulSoup(html,'html.parser')
-            ss=soup.select('.reviewQnaWrap ul ')
-            temp_s=''
-            temp_ss=''
-            for s in ss:
-                realdata = s.find_all('p')
-                for i in realdata:
-                    final = i.get_text(strip=True, separator='-') 
 
-                    tmp=make_arr_to_str(twitter.nouns(final)) 
-                    
-             
-                    temp_s=temp_s+final
-                    temp_ss=temp_ss+tmp
-            interview_review.append(temp_s)
-            interview_review_nouns.append(temp_ss)
-        else:
-            interview_review.append('')
-            interview_review_nouns.append('')
-    except Exception as e:
+    x=url.find("review")
+    if x!=-1:
+        req=requests.get('http://www.jobkorea.co.kr'+url)
+        html=req.text
+        soup=BeautifulSoup(html,'html.parser')
+        ss=soup.select('.reviewQnaWrap ul ')
+        temp_s=''
+        temp_ss=''
+        for s in ss:
+            realdata = s.find_all('p')
+            for i in realdata:
+                final = i.get_text(strip=True, separator='-') 
+
+                tmp=make_arr_to_str(twitter.nouns(final)) 
+                
+         
+                temp_s=temp_s+final
+                temp_ss=temp_ss+tmp
+        interview_review.append(temp_s)
+        interview_review_nouns.append(temp_ss)
+    else:
         interview_review.append('')
         interview_review_nouns.append('')
-        pass
 
 def get_main_content(url):
+    #rproxy.set_proxy(proxy_num=1)
+
+    #proxy = get_proxy_from_file()
+ 
+    time.sleep(7)
+    reqq= requests.get('http://www.jobkorea.co.kr'+url)
+    #time.sleep(2.5)
+    htmll = reqq.text
+    soupp = BeautifulSoup(htmll, 'html.parser')
+    result = soupp.find_all('span',class_="score")
+    if result:
+        final = result[0].get_text(strip=True, separator='-') 
+        final1 = result[1].get_text(strip=True, separator='-')
+        final2 = result[2].get_text(strip=True, separator='-')
+        final3 = result[3].get_text(strip=True, separator='-') 
+        final4 = result[4].get_text(strip=True, separator='-') 
+        final5 = result[5].get_text(strip=True, separator='-')
+        final6 = result[6].get_text(strip=True, separator='-')
+        final7 = result[7].get_text(strip=True, separator='-')
+        final8 = result[8].get_text(strip=True, separator='-')
+        final9 = result[9].get_text(strip=True, separator='-')         
+        tmp1= final.split('-')[0]
+        tmp2= final1.split('-')[0]
+        tmp3= final2.split('-')[0]
+        tmp4= final3.split('-')[0]
+        tmp5= final4.split('-')[0]
+        tmp6= final5.split('-')[0]
+        tmp7= final6.split('-')[0]
+        tmp8= final7.split('-')[0]
+        tmp9= final8.split('-')[0]
+    else:
+        tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7,tmp8,tmp9='','','','','','','','',''
+
+    #회사 위치 가져오기
     try:
-        time.sleep(3)
-        reqq= requests.get('http://www.jobkorea.co.kr'+url)
-        htmll = reqq.text
-        soupp = BeautifulSoup(htmll, 'html.parser')
-        result = soupp.find_all('span',class_="score")
-        if result:
-            final = result[0].get_text(strip=True, separator='-') 
-            final1 = result[1].get_text(strip=True, separator='-')
-            final2 = result[2].get_text(strip=True, separator='-')
-            final3 = result[3].get_text(strip=True, separator='-') 
-            final4 = result[4].get_text(strip=True, separator='-') 
-            final5 = result[5].get_text(strip=True, separator='-')
-            final6 = result[6].get_text(strip=True, separator='-')
-            final7 = result[7].get_text(strip=True, separator='-')
-            final8 = result[8].get_text(strip=True, separator='-')
-            final9 = result[9].get_text(strip=True, separator='-')         
-            tmp1= final.split('-')[0]
-            tmp2= final1.split('-')[0]
-            tmp3= final2.split('-')[0]
-            tmp4= final3.split('-')[0]
-            tmp5= final4.split('-')[0]
-            tmp6= final5.split('-')[0]
-            tmp7= final6.split('-')[0]
-            tmp8= final7.split('-')[0]
-            tmp9= final8.split('-')[0]
-        else:
-            tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7,tmp8,tmp9='','','','','','','','',''
+        result1=soupp.find_all('a', title="새창")[3]
+        f=result1.get_text(strip=True, separator='-') 
+        comp_location.append(f)
+    except IndexError as e:
+        comp_location.append('')
+    
 
-        #회사 위치 가져오기
-        try:
-            result1=soupp.find_all('a', title="새창")[3]
-            f=result1.get_text(strip=True, separator='-') 
-            comp_location.append(f)
-        except IndexError as e:
-            comp_location.append('')
-            pass
+    #지원자 수 가져오기
+    result4=soupp.find_all('div', class_="metrics metricsCount")
+    if result4 :
+        f=result4[0].get_text(strip=True, separator='-')
+        candidate_num.append(f.split('-')[1])
+    else:
+        candidate_num.append('')
 
-        #지원자 수 가져오기
-        result4=soupp.find_all('div', class_="metrics metricsCount")
-        if result4 :
-            f=result4[0].get_text(strip=True, separator='-')
-            candidate_num.append(f.split('-')[1])
-        else:
-            candidate_num.append('')
-            pass
+    #연봉 정보가 있는 링크 받아오기
+    try:
+        result5=soupp.find_all('a', class_="girBtn girBtn_3")
+        link=result5[len(result5)-1].get('href')
+        get_avg_salary(link)
+    except IndexError as e:
+        print(e)
+        avg_salary.append('')
+    #면접후기 링크 가져오기
+    result6=soupp.find_all('a', class_="linkList")
 
-        #연봉 정보가 있는 링크 받아오기
-        try:
-            result5=soupp.find_all('a', class_="girBtn girBtn_3")
-            link=result5[len(result5)-1].get('href')
-            get_avg_salary(link)
-        except Exception as e:
-            print('연봉error'+e)
-            avg_salary.append('')
-            pass
-        #면접후기 링크 가져오기
-        result6=soupp.find_all('a', class_="linkList")
+    if(result6):
+        cnt=0
+        for r in result6:
+            link1=r.get('href')
+            if link1[-1]=="5":
+                cnt+=1
+                get_interview_Q(link1)
+                
 
-        if(result6):
-            cnt=0
-            for r in result6:
-                link1=r.get('href')
-                if link1[-1]=="5":
-                    cnt+=1
-                    get_interview_Q(link1)
-                    
-
-                if link1[-1]=="3":
-                    cnt+=2
-                    get_interview_review(link1)
-                    
-            if(cnt==1):
-                interview_review.append('')
-                interview_review_nouns.append('')
-
-
-            elif(cnt==2):
-                interview_Q.append('')
-                interview_Q_nouns.append('')
-       
-        else:
-            interview_Q.append('')
-            interview_Q_nouns.append('')
+            if link1[-1]=="3":
+                cnt+=2
+                get_interview_review(link1)
+                
+        if(cnt==1):
             interview_review.append('')
             interview_review_nouns.append('')
 
 
-        tmp_ar=''
-        tmp_arr=''
-        tmp11= soupp.select('.devStartlist.listArea.pAssayList ul li')
-        temp2=''
-        try:
-            for t in tmp11:
-                temp11 =t.select('.tx a')
-
-                tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
-                for y in temp11:
-                    tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
-
-            cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
-            cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
-            cover_letter_Q.append(tmp_ar)
-            cover_letter_A.append(tmp_arr)
-        except Exception as e:
-            cover_letter_Q_nouns.append('')
-            cover_letter_Q.append('')
-            cover_letter_A_nouns.append('')
-            cover_letter_A.append('')
-            pass
-
-        try: 
-            result2=soupp.find_all('dl',class_="tbList")[3]
-            ff=result2.get_text(strip=True, separator='-') 
-            comp_industry.append(ff.split('-')[1])
-
-            split_list =ff.split('-')
-            #print(split_list)
-            num=0
-            i="ABCDE"
-            while num < len(split_list):
-
-                if split_list[num]=="사원수":
-                    #print("여기까지 옴")
-                    i=i.replace('A','')
-                    
-                    comp_member_number.append(split_list[num+1])
-                    
-                if split_list[num]=="설립": 
-                    i=i.replace('B','')
-                    comp_year.append(split_list[num+1])
-                    
-                if split_list[num]=="기업형태":
-                    i=i.replace('C','')
-                    comp_level.append(split_list[num+1])
-                    
-                if split_list[num]=="인증":
-                    i=i.replace('D','')
-                    comp_spec.append(split_list[num+1])
-                    
-                if split_list[num]=="매출액":
-                    i=i.replace('E','')
-                    comp_revenue.append(split_list[num+1])
-                    
-                num+=1
-            print(i)
-            if i.find('A')==-1:
-                comp_member_number.append('')
-            if i.find('B')==-1:
-                comp_spec.append('')
-            if i.find('C')==-1:
-                comp_revenue.append('')
-            if i.find('D')==-1:
-               comp_year.append('') 
-            if i.find('E')==-1:   
-                comp_revenue.append('')
-        except IndexError as e:
-            print("악"+e)
-            comp_industry.append('')
-            comp_member_number.append('')
-            comp_spec.append('')
-            comp_revenue.append('')
-            comp_year.append('')
-            comp_level.append('')
-            pass
-        
-
-        
-        emp_grade_score.append(tmp1)
-        emp_toeic_score.append(tmp2)
-        emp_ts_score.append(tmp3)
-        emp_opic_score.append(tmp4)
-        emp_etcL_score.append(tmp5)
-        emp_license_score.append(tmp6)
-        emp_otherCountry_score.append(tmp7)
-        emp_intern_score.append(tmp8)
-        emp_award_score.append(tmp9)
-
-
-    except Exception as e:
-        print('main_content error'+e)
+        elif(cnt==2):
+            interview_Q.append('')
+            interview_Q_nouns.append('')
+   
+    else:
         interview_Q.append('')
         interview_Q_nouns.append('')
         interview_review.append('')
         interview_review_nouns.append('')
-        comp_location.append('')
-        cover_letter_Q_nouns.append('')
-        cover_letter_Q.append('')
-        cover_letter_A_nouns.append('')
-        cover_letter_A.append('')
+
+
+    tmp_ar=''
+    tmp_arr=''
+    tmp11= soupp.select('.devStartlist.listArea.pAssayList ul li')
+    temp2=''
+    for t in tmp11:
+        temp11 =t.select('.tx a')
+
+        tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
+        for y in temp11:
+            tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
+
+    cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
+    cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
+    cover_letter_Q.append(tmp_ar)
+    cover_letter_A.append(tmp_arr)
+
+    try: 
+        result2=soupp.find_all('dl',class_="tbList")[3]
+        ff=result2.get_text(strip=True, separator='-') 
+        comp_industry.append(ff.split('-')[1])
+        split_list =ff.split('-')
+        #print(split_list)
+        num=0
+        i="ABCDE"
+        while num < len(split_list):
+
+            if split_list[num]=="사원수":
+                #print("여기까지 옴")
+                i=i.replace('A','')
+                
+                comp_member_number.append(split_list[num+1])
+                
+            if split_list[num]=="설립": 
+                i=i.replace('B','')
+                comp_year.append(split_list[num+1])
+                
+            if split_list[num]=="기업형태":
+                i=i.replace('C','')
+                comp_level.append(split_list[num+1])
+                
+            if split_list[num]=="인증":
+                i=i.replace('D','')
+                comp_spec.append(split_list[num+1])
+                
+            if split_list[num]=="매출액":
+                i=i.replace('E','')
+                comp_revenue.append(split_list[num+1])
+                
+            num+=1
+        #print(i)
+        if i.find('A')==-1:
+            comp_member_number.append('')
+        if i.find('B')==-1:
+            comp_year.append('')
+        if i.find('C')==-1:
+            comp_revenue.append('')
+        if i.find('D')==-1:
+           comp_spec.append('') 
+        if i.find('E')==-1:   
+            comp_revenue.append('') 
+    except IndexError as e:
         comp_industry.append('')
         comp_member_number.append('')
         comp_spec.append('')
         comp_revenue.append('')
         comp_year.append('')
         comp_level.append('')
-        candidate_num.append('')
-        avg_salary.append('')
-        pass
+    
+
+    
+    
+    emp_grade_score.append(tmp1)
+    emp_toeic_score.append(tmp2)
+    emp_ts_score.append(tmp3)
+    emp_opic_score.append(tmp4)
+    emp_etcL_score.append(tmp5)
+    emp_license_score.append(tmp6)
+    emp_otherCountry_score.append(tmp7)
+    emp_intern_score.append(tmp8)
+    emp_award_score.append(tmp9)
+
+
+
+
 
 
 ####################################################################################
@@ -374,7 +342,7 @@ try:
 
     page= int(int(aa)/40)+1
     
-    for pa in range(188,page):
+    for pa in range(214,page):
 
         sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)
@@ -385,12 +353,10 @@ try:
         '.filterList li'
         )
 
-
         for q in realdata:
 
             temp1=q.select(
                 '.co .coTit .coLink'  )
-
 
             temp2=q.select(
                 '.side .day'      )
@@ -469,48 +435,49 @@ try:
     # Add a bold format to use to highlight cells.
     bold = workbook.add_format({'bold': True})
 
-    worksheet.write('A1', 'title')
-    worksheet.write('B1', 'endday')
-    worksheet.write('C1', 'title')
-    worksheet.write('D1', 'dept')
-    worksheet.write('E1', 'dept2')
-    worksheet.write('F1', 'dept3')
-    worksheet.write('G1', 'coLevel')
-    worksheet.write('H1', 'career')
-    worksheet.write('I1', 'edu')
-    worksheet.write('J1', 'region')
-    worksheet.write('K1', 'comp_location')
-    worksheet.write('L1', 'link')
+    # Write some simple text.
+    worksheet.write('A1', '회사 이름')
+    worksheet.write('B1', '지원서 마감일자')
+    worksheet.write('C1', '제목')
+    worksheet.write('D1', '직무')
+    worksheet.write('E1', '직무2')
+    worksheet.write('F1', '직무3')
+    worksheet.write('G1', '기업스펙')
+    worksheet.write('H1', '요구 경력')
+    worksheet.write('I1', '요구 학력')
+    worksheet.write('J1', '지역')
+    worksheet.write('K1', '상세 지역')
+    worksheet.write('L1', '상세페이지 링크')
 
-    worksheet.write('M1', 'emp_grade_score')
-    worksheet.write('N1', 'emp_toeic_score')
-    worksheet.write('O1', 'emp_ts_score')
-    worksheet.write('P1', 'emp_opic_score')
-    worksheet.write('Q1', 'emp_etcL_score')
-    worksheet.write('R1', 'emp_license_score')
-    worksheet.write('S1', 'emp_otherCountry_score')
-    worksheet.write('T1', 'emp_intern_score')
-    worksheet.write('U1', 'emp_award_score')
+    worksheet.write('M1', '합격자 학점')
+    worksheet.write('N1', '합격자 토익')
+    worksheet.write('O1', '합격자 토익스피킹')
+    worksheet.write('P1', '합격자 오픽')
+    worksheet.write('Q1', '합격자 외국어(기타)')
+    worksheet.write('R1', '합격자 자격증개수')
+    worksheet.write('S1', '합격자 해외경험')
+    worksheet.write('T1', '합격자 인턴')
+    worksheet.write('U1', '합격자 수상횟수')
 
-    worksheet.write('V1', 'comp_industry')
-    worksheet.write('W1', 'comp_member_number')
-    worksheet.write('X1', 'comp_year')
-    worksheet.write('Y1', 'comp_level')
-    worksheet.write('Z1', 'comp_spec')
-    worksheet.write('AA1', 'comp_revenue')
+    worksheet.write('V1', '회사 산업분야')
+    worksheet.write('W1', '회사 직원 수')
+    worksheet.write('X1', '회사 설립년도')
+    worksheet.write('Y1', '회사 규모')
+    worksheet.write('Z1', '회사 스펙')
+    worksheet.write('AA1', '회사 영업이익')
 
-    worksheet.write('AB1', 'cover_letter_Q')
-    worksheet.write('AC1', 'cover_letter_A')
+    worksheet.write('AB1', '자소서 질문')
+    worksheet.write('AC1', '합격 자소서 답안')
 
-    worksheet.write('AD1', 'candidate_num')
-    worksheet.write('AE1', 'avg_salary')
+    worksheet.write('AD1', '지원자 수')
+    worksheet.write('AE1', '평균 연봉')
 
-    worksheet.write('AF1', 'interview_Q')
-    worksheet.write('AG1', 'interview_review')
-    worksheet.write('AH1', 'interview_Q_nouns')
-    worksheet.write('AI1', 'interview_review_nouns')
-    worksheet.write('AJ1', 'cover_letter_Q_nouns')
-    worksheet.write('AK1', 'cover_letter_A_nouns')
+    worksheet.write('AF1', '면접 질문')
+    worksheet.write('AG1', '면접 후기')
+    worksheet.write('AH1', '면접 질문(명사)')
+    worksheet.write('AI1', '면접 후기(명사)')
+    worksheet.write('AJ1', '자소서 질문(명사)')
+    worksheet.write('AK1', '자소서 답안(명사)')
 
 
 
@@ -574,7 +541,6 @@ try:
         number=number+1
 
     workbook.close()
-
 except Exception as e:
-    print('최종 보스'+e)
+    print(e)
     workbook.close()
