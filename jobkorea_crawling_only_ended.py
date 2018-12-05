@@ -333,7 +333,7 @@ try:
 
     page= int(int(aa)/40)+1
     
-    for pa in range(330,page):
+    for pa in range(361,page):
 
         sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)
@@ -455,7 +455,7 @@ try:
     worksheet.write('X1', '회사 설립년도')
     worksheet.write('Y1', '회사 규모')
     worksheet.write('Z1', '회사 스펙')
-    worksheet.write('AA1', '회사 영업이익')
+    worksheet.write('AA1', '회사 매출액 ')
 
     worksheet.write('AB1', '자소서 질문')
     worksheet.write('AC1', '합격 자소서 답안')

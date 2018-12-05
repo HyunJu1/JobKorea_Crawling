@@ -6,37 +6,24 @@ import re
 from konlpy.tag import Twitter
 from konlpy.utils import pprint
 twitter = Twitter()
-#결과물 5개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+
 #결과물 800개
 urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#결과물 1개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#결과물 190개 
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#결과물 50개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 #마감된 공고
 urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#마감된 공고 500개
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#마감된 공고 300개
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#마감된 공고 중 6개
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
 name,endday,title,dept,dept2,dept3,coLevel,career,edu,region,link,comp_location=[],[],[],[],[],[],[],[],[],[],[],[]
 
 emp_grade_score=[] #학점 
-emp_toeic_score=[]
-emp_ts_score=[]
-emp_opic_score=[]
+emp_toeic_score=[] #토익점수
+emp_ts_score=[] #토익스피킹 점수
+emp_opic_score=[] # 오픽 점수 
 emp_etcL_score=[] #외국어(기타)
 emp_license_score=[] #자격증개수 
 emp_otherCountry_score=[]  #해외경험
-emp_intern_score=[]
-emp_award_score=[]
+emp_intern_score=[] #인턴경험횟수
+emp_award_score=[] #수상횟수
 
 comp_industry,comp_member_number,comp_year, comp_level, comp_spec,comp_revenue=[],[],[],[],[],[]
 
@@ -45,6 +32,7 @@ candidate_num, avg_salary=[],[]
 
 cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_nouns=[],[],[],[]
 
+#자소서 질문 받아오기
 def get_cover_letter_Q(url):
     try:
         req=requests.get('http://www.jobkorea.co.kr'+url)
@@ -60,7 +48,7 @@ def get_cover_letter_Q(url):
             return tt1
     except Exception as e:
         pass
-
+#합격 자소서 답안 받아오기
 def get_cover_letter_A(url):
     try:
         req=requests.get('http://www.jobkorea.co.kr'+url)
@@ -85,6 +73,8 @@ def make_arr_to_str(arr):
     for t in arr:
         str1=str1+" "+t
     return str1
+
+#직원 평균 연봉 수집하기
 def get_avg_salary(url):
     req=requests.get('http://www.jobkorea.co.kr'+url)
     html=req.text
@@ -97,6 +87,7 @@ def get_avg_salary(url):
     else:
         avg_salary.append('')
 
+#면접 질문 수집하기
 def get_interview_Q(url):
     try:
         x=url.find("review")
@@ -127,7 +118,7 @@ def get_interview_Q(url):
         interview_Q_nouns.append('')
         pass
 
-
+#면접 후기 수집하기
 def get_interview_review(url):
     try:
         x=url.find("review")
@@ -158,6 +149,7 @@ def get_interview_review(url):
         interview_review_nouns.append('')
         pass
 
+#리스트에서 상세페이지로 들어가기
 def get_main_content(url):
     time.sleep(2)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
@@ -212,7 +204,8 @@ def get_main_content(url):
     except IndexError as e:
         print(e)
         avg_salary.append('')
-    #면접후기 링크 가져오기
+
+    #면접후기/질문 링크 가져오기
     result6=soupp.find_all('a', class_="linkList")
 
     if(result6):
@@ -461,40 +454,37 @@ try:
     worksheet.write('I1', 'edu')
     worksheet.write('J1', 'region')
     worksheet.write('K1', 'comp_location')
-    worksheet.write('L1', 'link')
+    worksheet.write('K1', 'link')
 
+    worksheet.write('L1', 'emp_grade_score')
+    worksheet.write('M1', 'emp_toeic_score')
+    worksheet.write('N1', 'emp_ts_score')
+    worksheet.write('O1', 'emp_opic_score')
+    worksheet.write('P1', 'emp_etcL_score')
+    worksheet.write('Q1', 'emp_license_score')
+    worksheet.write('R1', 'emp_otherCountry_score')
+    worksheet.write('S1', 'emp_intern_score')
+    worksheet.write('T1', 'emp_award_score')
 
+    worksheet.write('U1', 'comp_industry')
+    worksheet.write('V1', 'comp_member_number')
+    worksheet.write('W1', 'comp_year')
+    worksheet.write('X1', 'comp_level')
+    worksheet.write('Y1', 'comp_spec')
+    worksheet.write('Z1', 'comp_revenue')
 
+    worksheet.write('AA1', 'cover_letter_Q')
+    worksheet.write('AB1', 'cover_letter_A')
 
-    worksheet.write('M1', 'emp_grade_score')
-    worksheet.write('N1', 'emp_toeic_score')
-    worksheet.write('O1', 'emp_ts_score')
-    worksheet.write('P1', 'emp_opic_score')
-    worksheet.write('Q1', 'emp_etcL_score')
-    worksheet.write('R1', 'emp_license_score')
-    worksheet.write('S1', 'emp_otherCountry_score')
-    worksheet.write('T1', 'emp_intern_score')
-    worksheet.write('U1', 'emp_award_score')
+    worksheet.write('AC1', 'candidate_num')
+    worksheet.write('AD1', 'avg_salary')
 
-    worksheet.write('V1', 'comp_industry')
-    worksheet.write('W1', 'comp_member_number')
-    worksheet.write('X1', 'comp_year')
-    worksheet.write('Y1', 'comp_level')
-    worksheet.write('Z1', 'comp_spec')
-    worksheet.write('AA1', 'comp_revenue')
-
-    worksheet.write('AB1', 'cover_letter_Q')
-    worksheet.write('AC1', 'cover_letter_A')
-
-    worksheet.write('AD1', 'candidate_num')
-    worksheet.write('AE1', 'avg_salary')
-
-    worksheet.write('AF1', 'interview_Q')
-    worksheet.write('AG1', 'interview_review')
-    worksheet.write('AH1', 'interview_Q_nouns')
-    worksheet.write('AI1', 'interview_review_nouns')
-    worksheet.write('AJ1', 'cover_letter_Q_nouns')
-    worksheet.write('AK1', 'cover_letter_A_nouns')
+    worksheet.write('AE1', 'interview_Q')
+    worksheet.write('AF1', 'interview_review')
+    worksheet.write('AG1', 'interview_Q_nouns')
+    worksheet.write('AH1', 'interview_review_nouns')
+    worksheet.write('AI1', 'cover_letter_Q_nouns')
+    worksheet.write('AJ1', 'cover_letter_A_nouns')
 
 
 
@@ -513,51 +503,49 @@ try:
         worksheet.write(number+1, 7, career[number])
         worksheet.write(number+1, 8, edu[number])
         worksheet.write(number+1, 9, region[number])
-        
-        #worksheet.write(number+1, 10, comp_location[number])
-        worksheet.write(number+1, 11, link[number])
 
-        worksheet.write(number+1, 12, emp_grade_score[number])
-        worksheet.write(number+1, 13, emp_toeic_score[number])
-        worksheet.write(number+1, 14, emp_ts_score[number])
-        worksheet.write(number+1, 15, emp_opic_score[number])
-        worksheet.write(number+1, 16, emp_etcL_score[number])
-        worksheet.write(number+1, 17, emp_license_score[number])
-        worksheet.write(number+1, 18, emp_otherCountry_score[number])
-        worksheet.write(number+1, 19, emp_intern_score[number])
-        worksheet.write(number+1, 20, emp_award_score[number])
+        worksheet.write(number+1, 10, link[number])
 
-        worksheet.write(number+1, 21, comp_industry[number])
-        worksheet.write(number+1, 22, comp_member_number[number])
-        worksheet.write(number+1, 23, comp_year[number])
-        worksheet.write(number+1, 24, comp_level[number])
-        worksheet.write(number+1, 25, comp_spec[number])
-        worksheet.write(number+1, 26, comp_revenue[number])
-        worksheet.write(number+1, 27, cover_letter_Q[number])
-        worksheet.write(number+1, 28, cover_letter_A[number])
-        worksheet.write(number+1, 29, candidate_num[number])
-        worksheet.write(number+1, 30, avg_salary[number])
+        worksheet.write(number+1, 11, emp_grade_score[number])
+        worksheet.write(number+1, 12, emp_toeic_score[number])
+        worksheet.write(number+1, 13, emp_ts_score[number])
+        worksheet.write(number+1, 14, emp_opic_score[number])
+        worksheet.write(number+1, 15, emp_etcL_score[number])
+        worksheet.write(number+1, 16, emp_license_score[number])
+        worksheet.write(number+1, 17, emp_otherCountry_score[number])
+        worksheet.write(number+1, 18, emp_intern_score[number])
+        worksheet.write(number+1, 19, emp_award_score[number])
+
+        worksheet.write(number+1, 20, comp_industry[number])
+        worksheet.write(number+1, 21, comp_member_number[number])
+        worksheet.write(number+1, 22, comp_year[number])
+        worksheet.write(number+1, 23, comp_level[number])
+        worksheet.write(number+1, 24, comp_spec[number])
+        worksheet.write(number+1, 25, comp_revenue[number])
+        worksheet.write(number+1, 26, cover_letter_Q[number])
+        worksheet.write(number+1, 27, cover_letter_A[number])
+        worksheet.write(number+1, 28, candidate_num[number])
+        worksheet.write(number+1, 29, avg_salary[number])
         try:
-            worksheet.write(number+1, 31, interview_Q[number])
+            worksheet.write(number+1, 30, interview_Q[number])
         except IndexError as e:
             interview_Q.append('')
             interview_Q_nouns.append('')
-            worksheet.write(number+1, 31, interview_Q[number])
+            worksheet.write(number+1, 30, interview_Q[number])
         try:
-            worksheet.write(number+1, 32, interview_review[number])
+            worksheet.write(number+1, 31, interview_review[number])
         except IndexError as e:
             interview_review.append('')
             interview_review_nouns.append('')
-            worksheet.write(number+1, 32, interview_review[number])
+            worksheet.write(number+1, 31, interview_review[number])
 
-
-        worksheet.write(number+1, 33, interview_Q_nouns[number])
-        worksheet.write(number+1, 34, interview_review_nouns[number])
-        worksheet.write(number+1, 35, cover_letter_Q_nouns[number])
-        worksheet.write(number+1, 36, cover_letter_A_nouns[number])
+        worksheet.write(number+1, 32, interview_Q_nouns[number])
+        worksheet.write(number+1, 33, interview_review_nouns[number])
+        worksheet.write(number+1, 34, cover_letter_Q_nouns[number])
+        worksheet.write(number+1, 35, cover_letter_A_nouns[number])
         number=number+1
-
     workbook.close()
+    
 except Exception as e:
     print(e)
     workbook.close()
