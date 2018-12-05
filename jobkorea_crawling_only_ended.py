@@ -8,17 +8,8 @@ from konlpy.utils import pprint
 
 twitter = Twitter()
 
-#결과물 5개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=4&schWork=2&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #결과물 800개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#결과물 1개
-#urlpage="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=6&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#결과물 190개 
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-#결과물 50개
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=10016&schMajor=&schEduLevel=5&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
-
+#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=0&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고
 urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=&schWork=&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 500개
@@ -158,7 +149,7 @@ def get_main_content(url):
 
     #proxy = get_proxy_from_file()
  
-    time.sleep(7)
+    time.sleep(20)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     #time.sleep(2.5)
     htmll = reqq.text
@@ -294,16 +285,16 @@ def get_main_content(url):
                 
             num+=1
         #print(i)
-        if i.find('A')==-1:
+        if i.find('A')>-1:
             comp_member_number.append('')
-        if i.find('B')==-1:
+        if i.find('B')>-1:
             comp_year.append('')
-        if i.find('C')==-1:
-            comp_revenue.append('')
-        if i.find('D')==-1:
+        if i.find('C')>-1:
+            comp_level.append('')
+        if i.find('D')>-1:
            comp_spec.append('') 
-        if i.find('E')==-1:   
-            comp_revenue.append('') 
+        if i.find('E')>-1:   
+            comp_revenue.append('')
     except IndexError as e:
         comp_industry.append('')
         comp_member_number.append('')
@@ -342,7 +333,7 @@ try:
 
     page= int(int(aa)/40)+1
     
-    for pa in range(214,page):
+    for pa in range(330,page):
 
         sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)
@@ -422,7 +413,7 @@ try:
 
 
     # Create an new Excel file and add a worksheet.
-    workbook = xlsxwriter.Workbook('sample.xlsx')
+    workbook = xlsxwriter.Workbook('to_the_final22222222.xlsx')
     worksheet = workbook.add_worksheet()
 
     # Widen the first column to make the text clearer.
@@ -525,15 +516,16 @@ try:
         except IndexError as e:
             interview_Q.append('')
             interview_Q_nouns.append('')
-            worksheet.write(number+1, 31, interview_Q[number])
+            
         try:
             worksheet.write(number+1, 32, interview_review[number])
         except IndexError as e:
             interview_review.append('')
             interview_review_nouns.append('')
-            worksheet.write(number+1, 32, interview_review[number])
+            
 
-
+        worksheet.write(number+1, 31, interview_Q[number])
+        worksheet.write(number+1, 32, interview_review[number])
         worksheet.write(number+1, 33, interview_Q_nouns[number])
         worksheet.write(number+1, 34, interview_review_nouns[number])
         worksheet.write(number+1, 35, cover_letter_Q_nouns[number])
