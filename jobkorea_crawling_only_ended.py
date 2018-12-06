@@ -15,7 +15,7 @@ urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEdu
 #마감된 공고 500개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10013,10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 300개
-#urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
+#="http://www.jobkorea.co.kr/starter/?schLocal=I000&schPart=10015&schMajor=&schEduLevel=&schWork=2&schCType=&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 #마감된 공고 중 6개
 #urlpage2="http://www.jobkorea.co.kr/starter/?schLocal=&schPart=&schMajor=&schEduLevel=6&schWork=2&schCType=13&isSaved=1&LinkGubun=1&LinkNo=0&schType=0&schGid=0&schOrderBy=0&schTxt=&Page="
 
@@ -39,10 +39,8 @@ candidate_num, avg_salary=[],[]
 cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_nouns=[],[],[],[]
 
 def get_cover_letter_Q(url):
-    #time.sleep(2.7)
-
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    #time.sleep(2)
+
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -56,10 +54,9 @@ def get_cover_letter_Q(url):
 
 
 def get_cover_letter_A(url):
-    #time.sleep(2.5)
-    #print('여기까지 옴22'+url)
+
     req=requests.get('http://www.jobkorea.co.kr'+url)
-    #time.sleep(2.6)
+
     html=req.text
     soup=BeautifulSoup(html,'html.parser')
 
@@ -134,10 +131,22 @@ def get_interview_review(url):
                 final = i.get_text(strip=True, separator='-') 
 
                 tmp=make_arr_to_str(twitter.nouns(final)) 
-                
-         
                 temp_s=temp_s+final
                 temp_ss=temp_ss+tmp
+        ss1=soup.select('.show')
+        temp_s1=''
+        temp_ss=''      
+        for s in ss1:
+            realdata = s.find_all('p')
+            for i in realdata:
+                final = i.get_text(strip=True, separator='-') 
+
+                tmp=make_arr_to_str(twitter.nouns(final))                 
+         
+                temp_s=temp_s+final
+
+                temp_ss=temp_ss+tmp
+        print(temp_s)
         interview_review.append(temp_s)
         interview_review_nouns.append(temp_ss)
     else:
@@ -149,7 +158,7 @@ def get_main_content(url):
 
     #proxy = get_proxy_from_file()
  
-    time.sleep(20)
+    time.sleep(10)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     #time.sleep(2.5)
     htmll = reqq.text
@@ -333,7 +342,7 @@ try:
 
     page= int(int(aa)/40)+1
     
-    for pa in range(361,page):
+    for pa in range(359,page):
 
         sendpage=urlpage2+str(pa+1)
         data = requests.get(sendpage)
