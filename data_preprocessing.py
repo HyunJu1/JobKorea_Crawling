@@ -1,14 +1,13 @@
 import numpy as np 
 import pandas as pd 
-import matplotlib.font_manager as fm
-from matplotlib import rc
-from matplotlib import pyplot as plt
+
+
 import re
 font_name = fm.FontProperties(fname="c:/Windows/Fonts/malgun.ttf").get_name()
 rc('font', family=font_name)
 
 
-df=pd.read_excel('sample_7700.xlsx',header=0)
+df=pd.read_excel('jobkorea_data.xlsx',header=0)
 
 df['comp_member_number']=(pd.to_numeric(df['comp_member_number'].str.replace(',',''), errors='coerce'))
 df['avg_salary']=(pd.to_numeric(df['avg_salary'].str.replace(',',''), errors='coerce'))
@@ -62,4 +61,4 @@ df['cover_letter_A']=df['cover_letter_A'].str.replace(',','').str.replace('\n','
 print(df.info())
 print(df.head())
 
-df.to_excel("result_7700.xlsx",encoding="utf-8")
+df.to_excel("jobkorea_data_after.xlsx",encoding="utf-8")
