@@ -34,32 +34,29 @@ cover_letter_A_nouns, cover_letter_Q_nouns, interview_Q_nouns, interview_review_
 
 #자소서 질문 받아오기
 def get_cover_letter_Q(url):
-    try:
-        req=requests.get('http://www.jobkorea.co.kr'+url)
-        html=req.text
-        soup=BeautifulSoup(html,'html.parser')
+    req=requests.get('http://www.jobkorea.co.kr'+url)
 
-        realdata = soup.select(
-        '.cont .bx ul '
-        )
-        for r in realdata:
-            tt1= r.select('li')
-            tt1=make_context(tt1)
-            return tt1
-    except Exception as e:
-        pass
+    html=req.text
+    soup=BeautifulSoup(html,'html.parser')
+
+    realdata = soup.select(
+    '.cont .bx ul '
+    )
+    for r in realdata:
+        tt1= r.select('li')
+        tt1=make_context(tt1)
+        return tt1
+
 #합격 자소서 답안 받아오기
 def get_cover_letter_A(url):
-    try:
-        req=requests.get('http://www.jobkorea.co.kr'+url)
-        html=req.text
-        soup=BeautifulSoup(html,'html.parser')
+    req=requests.get('http://www.jobkorea.co.kr'+url)
 
-        realdata=soup.find_all('div',class_='tx')
-        str1=make_context(realdata)
-        return str1
-    except Exception as e:
-        pass
+    html=req.text
+    soup=BeautifulSoup(html,'html.parser')
+
+    realdata=soup.find_all('div',class_='tx')
+    str1=make_context(realdata)
+    return str1
 
 
 def make_context(arr):
@@ -89,69 +86,71 @@ def get_avg_salary(url):
 
 #면접 질문 수집하기
 def get_interview_Q(url):
-    try:
-        x=url.find("review")
-        if x!=-1:
-            req=requests.get('http://www.jobkorea.co.kr'+url)
-            html=req.text
-            soup=BeautifulSoup(html,'html.parser')
-            ss=soup.select('.reviewQnaWrap ul li')
-            temp_s=''
-            temp_ss=''
-            for s in ss:
-                realdata = s.find_all('span',class_="tx")
-        
-                for i in realdata:
+    x=url.find("review")
+    if x!=-1:
+        req=requests.get('http://www.jobkorea.co.kr'+url)
+        html=req.text
+        soup=BeautifulSoup(html,'html.parser')
+        ss=soup.select('.reviewQnaWrap ul li')
+        temp_s=''
+        temp_ss=''
+        for s in ss:
+            realdata = s.find_all('span',class_="tx")
+    
+            for i in realdata:
 
-                    final = i.get_text(strip=True, separator='-') 
+                final = i.get_text(strip=True, separator='-') 
 
-                    tmp=make_arr_to_str(twitter.nouns(final))
-                    temp_ss=temp_ss+tmp
-                    temp_s=temp_s+final
-            interview_Q_nouns.append(temp_ss)
-            interview_Q.append(temp_s)
-        else:
-            interview_Q.append('')
-            interview_Q_nouns.append('')
-    except Exception as e:
+                tmp=make_arr_to_str(twitter.nouns(final))
+                temp_ss=temp_ss+tmp
+                temp_s=temp_s+final
+        interview_Q_nouns.append(temp_ss)
+        interview_Q.append(temp_s)
+    else:
         interview_Q.append('')
         interview_Q_nouns.append('')
-        pass
 
 #면접 후기 수집하기
 def get_interview_review(url):
-    try:
-        x=url.find("review")
-        if x!=-1:
-            req=requests.get('http://www.jobkorea.co.kr'+url)
-            html=req.text
-            soup=BeautifulSoup(html,'html.parser')
-            ss=soup.select('.reviewQnaWrap ul ')
-            temp_s=''
-            temp_ss=''
-            for s in ss:
-                realdata = s.find_all('p')
-                for i in realdata:
-                    final = i.get_text(strip=True, separator='-') 
+    x=url.find("review")
+    if x!=-1:
+        req=requests.get('http://www.jobkorea.co.kr'+url)
+        html=req.text
+        soup=BeautifulSoup(html,'html.parser')
+        ss=soup.select('.reviewQnaWrap ul ')
+        temp_s=''
+        temp_ss=''
+        for s in ss:
+            realdata = s.find_all('p')
+            for i in realdata:
+                final = i.get_text(strip=True, separator='-') 
 
-                    tmp=make_arr_to_str(twitter.nouns(final)) 
-                    
-             
-                    temp_s=temp_s+final
-                    temp_ss=temp_ss+tmp
-            interview_review.append(temp_s)
-            interview_review_nouns.append(temp_ss)
-        else:
-            interview_review.append('')
-            interview_review_nouns.append('')
-    except Exception as e:
+                tmp=make_arr_to_str(twitter.nouns(final)) 
+                temp_s=temp_s+final
+                temp_ss=temp_ss+tmp
+        ss1=soup.select('.show')
+        temp_s1=''
+        temp_ss=''      
+        for s in ss1:
+            realdata = s.find_all('p')
+            for i in realdata:
+                final = i.get_text(strip=True, separator='-') 
+
+                tmp=make_arr_to_str(twitter.nouns(final))                 
+         
+                temp_s=temp_s+final
+
+                temp_ss=temp_ss+tmp
+        print(temp_s)
+        interview_review.append(temp_s)
+        interview_review_nouns.append(temp_ss)
+    else:
         interview_review.append('')
         interview_review_nouns.append('')
-        pass
 
 #리스트에서 상세페이지로 들어가기
 def get_main_content(url):
-    time.sleep(2)
+    time.sleep(3)
     reqq= requests.get('http://www.jobkorea.co.kr'+url)
     htmll = reqq.text
     soupp = BeautifulSoup(htmll, 'html.parser')
@@ -236,69 +235,67 @@ def get_main_content(url):
         interview_review.append('')
         interview_review_nouns.append('')
 
+
     tmp_ar=''
     tmp_arr=''
     tmp11= soupp.select('.devStartlist.listArea.pAssayList ul li')
     temp2=''
-    try:
-        for t in tmp11:
-            temp11 =t.select('.tx a')
+    for t in tmp11:
+        temp11 =t.select('.tx a')
 
-            tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
-            for y in temp11:
-                tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
+        tmp_ar=get_cover_letter_Q(temp11[0].get('href'))
+        for y in temp11:
+            tmp_arr=tmp_arr+' '+get_cover_letter_A(y.get('href'))
 
-        cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
-        cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
-        cover_letter_Q.append(tmp_ar)
-        cover_letter_A.append(tmp_arr)
-    except Exception as e:
-        cover_letter_Q_nouns.append('')
-        cover_letter_Q.append('')
-        cover_letter_A_nouns.append('')
-        cover_letter_A.append('')
-        pass
+    cover_letter_Q_nouns.append(make_arr_to_str(twitter.nouns(tmp_ar)))
+    cover_letter_A_nouns.append(make_arr_to_str(twitter.nouns(tmp_arr)))
+    cover_letter_Q.append(tmp_ar)
+    cover_letter_A.append(tmp_arr)
 
     try: 
         result2=soupp.find_all('dl',class_="tbList")[3]
         ff=result2.get_text(strip=True, separator='-') 
         comp_industry.append(ff.split('-')[1])
         split_list =ff.split('-')
-        if len(split_list)<=12:
-            if len(split_list)<=10:
-                comp_member_number.append('')
-                comp_spec.append('')
-                comp_revenue.append('')
-                comp_year.append(ff.split('-')[3])
-                comp_level.append(ff.split('-')[8])
-            else:
-                comp_spec.append('')
-                comp_revenue.append('')
-                comp_member_number.append(ff.split('-')[3])
-                comp_year.append(ff.split('-')[6])
-                comp_level.append('') 
-        
-        elif ff.split('-')[12] =="매출액": #인증 대신 영업 이익만 있다면 
-            comp_spec.append('')
-            comp_revenue.append(ff.split('-')[13])
-            comp_member_number.append(ff.split('-')[3])
-            comp_year.append(ff.split('-')[6])
-            comp_level.append(ff.split('-')[11]) 
-        
-        else:
-            if len(split_list)<=14: #매출액 대신 인증만 있다면 
-                comp_spec.append(ff.split('-')[13])
-                comp_revenue.append('')
-                comp_member_number.append(ff.split('-')[3])
-                comp_year.append(ff.split('-')[6])
-                comp_level.append(ff.split('-')[11]) 
-        
-            else: #매츨액, 인증 둘 다 있다면 
-                comp_spec.append(ff.split('-')[13])
-                comp_revenue.append(ff.split('-')[15])
-                comp_member_number.append(ff.split('-')[3])
-                comp_year.append(ff.split('-')[6])
-                comp_level.append(ff.split('-')[11]) 
+        #print(split_list)
+        num=0
+        i="ABCDE"
+        while num < len(split_list):
+
+            if split_list[num]=="사원수":
+                #print("여기까지 옴")
+                i=i.replace('A','')
+                
+                comp_member_number.append(split_list[num+1])
+                
+            if split_list[num]=="설립": 
+                i=i.replace('B','')
+                comp_year.append(split_list[num+1])
+                
+            if split_list[num]=="기업형태":
+                i=i.replace('C','')
+                comp_level.append(split_list[num+1])
+                
+            if split_list[num]=="인증":
+                i=i.replace('D','')
+                comp_spec.append(split_list[num+1])
+                
+            if split_list[num]=="매출액":
+                i=i.replace('E','')
+                comp_revenue.append(split_list[num+1])
+                
+            num+=1
+        #print(i)
+        if i.find('A')>-1:
+            comp_member_number.append('')
+        if i.find('B')>-1:
+            comp_year.append('')
+        if i.find('C')>-1:
+            comp_level.append('')
+        if i.find('D')>-1:
+           comp_spec.append('') 
+        if i.find('E')>-1:   
+            comp_revenue.append('')
     except IndexError as e:
         comp_industry.append('')
         comp_member_number.append('')
@@ -429,7 +426,7 @@ try:
 
 
     # Create an new Excel file and add a worksheet.
-    workbook = xlsxwriter.Workbook('sample.xlsx')
+    workbook = xlsxwriter.Workbook('jobkorea_data.xlsx')
     worksheet = workbook.add_worksheet()
 
     # Widen the first column to make the text clearer.
@@ -531,14 +528,15 @@ try:
         except IndexError as e:
             interview_Q.append('')
             interview_Q_nouns.append('')
-            worksheet.write(number+1, 30, interview_Q[number])
+            
         try:
             worksheet.write(number+1, 31, interview_review[number])
         except IndexError as e:
             interview_review.append('')
             interview_review_nouns.append('')
-            worksheet.write(number+1, 31, interview_review[number])
-
+            
+        worksheet.write(number+1, 30, interview_Q[number])
+        worksheet.write(number+1, 31, interview_review[number])
         worksheet.write(number+1, 32, interview_Q_nouns[number])
         worksheet.write(number+1, 33, interview_review_nouns[number])
         worksheet.write(number+1, 34, cover_letter_Q_nouns[number])
