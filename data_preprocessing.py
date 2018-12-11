@@ -38,10 +38,6 @@ df['comp_revenue']=df['comp_revenue'].str.replace('천','000').str.replace('조'
 x=df['comp_revenue'].str.split(' ')
 x=x.values.tolist()
 
-# print(x[0][0])
-# print(x[0][1])
-# print(x[1][0])
-
 
 #앞서 처리한 기업 매출액 숫자들을 합함  (만 단위)
 # 예)) o조 o억 o천만 --> 숫자변환  (만 단위)
