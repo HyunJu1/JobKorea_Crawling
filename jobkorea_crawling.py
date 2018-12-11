@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import re
+
+#텍스트 분석을 위한 konlpy모듈
 from konlpy.tag import Twitter
 from konlpy.utils import pprint
 twitter = Twitter()
@@ -101,6 +103,7 @@ def get_interview_Q(url):
 
                 final = i.get_text(strip=True, separator='-') 
 
+                #텍스트 수집과 동시에,명사를 태깅하여 이를 모아서 하나의 컬럼에 넣어준다. 
                 tmp=make_arr_to_str(twitter.nouns(final))
                 temp_ss=temp_ss+tmp
                 temp_s=temp_s+final
@@ -124,7 +127,8 @@ def get_interview_review(url):
             realdata = s.find_all('p')
             for i in realdata:
                 final = i.get_text(strip=True, separator='-') 
-
+                
+                #텍스트 수집과 동시에,명사를 태깅하여 이를 모아서 하나의 컬럼에 넣어준다. 
                 tmp=make_arr_to_str(twitter.nouns(final)) 
                 temp_s=temp_s+final
                 temp_ss=temp_ss+tmp
