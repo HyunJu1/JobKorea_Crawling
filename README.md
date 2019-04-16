@@ -29,7 +29,7 @@
 
 
 ####	데이터 분석:
-- 시스템 아키텍쳐 
+- 시스템 아키텍쳐
 
 ![bigdata](https://user-images.githubusercontent.com/17667687/52959851-a83d7d80-33da-11e9-89b3-3f18fb1c4295.png)
 
@@ -46,3 +46,10 @@
 	4.	MySQL
 	5.	Sqoop,
 	6.	Zeppelin
+
+
+	### 2019년 04월 이후 추가 내용
+
+	- AWS Lambda Function & AWS ClockWatch + AWS RDS 를 활용한 Serverless 자동 크롤링 시스템 구축 완료.
+
+![bigdata](https://user-images.githubusercontent.com/17667687/56209605-f09db280-608e-11e9-8e31-d1f169582ffc.PNG)
